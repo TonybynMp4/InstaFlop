@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../../models/user');
 const app = express();
+const requireAuth = require('../../middlewares/auth');
 
 app.get('/getUsers', async (req, res) => {
     try {
