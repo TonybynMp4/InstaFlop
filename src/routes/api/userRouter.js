@@ -1,9 +1,9 @@
-const express = require('express');
+const router = require('express').Router();
 const User = require('../../models/user');
-const app = express();
-const requireAuth = require('../../middlewares/auth');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-app.get('/getUsers', async (req, res) => {
+router.get('/getUsers', async (req, res) => {
     try {
         const users = await User.getAll();
         res.status(200).json(users);
@@ -12,7 +12,7 @@ app.get('/getUsers', async (req, res) => {
     }
 });
 
-app.get('/getUser/:id', async (req, res) => {
+router.get('/getUser/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.getById(id);
@@ -25,7 +25,7 @@ app.get('/getUser/:id', async (req, res) => {
     }
 });
 
-app.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -41,7 +41,7 @@ app.post('/', async (req, res) => {
     }
 });
 
-app.delete('/', async (req, res) => {
+router.delete('/', async (req, res) => {
     const { id } = req.body;
 
     if (!id) {
@@ -60,7 +60,7 @@ app.delete('/', async (req, res) => {
     }
 });
 
-app.put('/', async (req, res) => {
+router.put('/', async (req, res) => {
     const { id, username, email } = req.body;
 
     if (!id)
@@ -80,25 +80,51 @@ app.put('/', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(400).json({ error: 'All fields are required' });
-        return;
+        return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
         const user = await User.getByEmail(email);
-        if (!user || user.password !== password) {
-            res.status(401).json({ error: 'Invalid credentials' });
-            return;
+        if (!user || !bcrypt.compareSync(password, user.password)) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        res.status(200).json(user);
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        });
+
+        res.status(200).json({ token });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-module.exports = app;
+router.post('/register', async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        res.status(400).json({ error: 'All fields are required' });
+        return;
+    }
+
+
+
+    try {
+        const user = await User.getByEmail(email);
+        if (user) {
+            res.status(400).json({ error: 'Email already registered' });
+            return;
+        }
+
+        const newUser = await User.create(req.body);
+        res.status(201).json(newUser);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+module.exports = router;

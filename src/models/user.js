@@ -1,4 +1,5 @@
 const db = require('./db')
+const bcrypt = require('bcrypt');
 
 class User {
     static async getAll() {
@@ -35,6 +36,8 @@ class User {
     }
 
     static async create({ username, email, password }) {
+        password = bcrypt.hashSync(password, 10);
+
         return new Promise((resolve, reject) => {
             db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?) RETURNING *', [username, email, password], (err, rows) => {
                 if(err)
