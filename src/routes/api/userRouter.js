@@ -2,6 +2,8 @@ const router = require('express').Router();
 const User = require('../../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { email, password } = require('../../middlewares/validators');
+const validationResult = require('../../middlewares/validationResult');
 
 router.get('/getUsers', async (req, res) => {
     try {
@@ -103,15 +105,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register', email, password, validationResult, async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
         res.status(400).json({ error: 'All fields are required' });
         return;
     }
-
-
 
     try {
         const user = await User.getByEmail(email);
