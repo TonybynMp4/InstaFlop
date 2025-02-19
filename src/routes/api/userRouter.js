@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { email, password } = require('../../middlewares/validators');
 const validationResult = require('../../middlewares/validationResult');
 
+// public API
 router.get('/getUsers', async (req, res) => {
     try {
         const users = await User.getAll();
@@ -26,6 +27,10 @@ router.get('/getUser/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+//TODO: API auth middleware
+//router.use();
+// protected API (only authenticated users can access)
 
 router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
