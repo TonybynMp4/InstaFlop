@@ -6,7 +6,8 @@
     "start": "node server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server.js",
-    "client": "npm run dev --prefix ./client"
+    "client": "npm run dev --prefix ./client",
+    "build:client": "npm run build --prefix ./client"
   },
   "keywords": [],
   "author": "",

@@ -1,8 +1,7 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
-app.get('', (req, res) => {
-    res.sendFile('index.html', { root: './src/views' });
-});
+app.use(express.static(path.join(__dirname, '../../../client/dist')));
 
 module.exports = app;
