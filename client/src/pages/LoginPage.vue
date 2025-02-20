@@ -2,6 +2,8 @@
     import { reactive } from 'vue';
     import FormComponent from '../components/FormComponent.vue';
     import type { ButtonComponent, FieldComponent } from '../types';
+    import useAuthStore from '../stores/auth-store';
+    import { storeToRefs } from 'pinia';
 
     const formData = reactive<{
         formLegend: string;
@@ -18,9 +20,6 @@
             { id: 'reset', label: 'Reset', type: 'reset' }
         ]
     });
-
-    import { useAuthStore } from "../stores/auth-store"
-    import { storeToRefs } from "pinia";
 
     const authStore  = useAuthStore()
     const { getToken } = storeToRefs(authStore)
