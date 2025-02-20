@@ -19,20 +19,21 @@
         ]
     });
 
-    function onsubmit(event: Event) {
+    import { useAuthStore } from "../stores/auth-store"
+    import { storeToRefs } from "pinia";
+
+    const authStore  = useAuthStore()
+    const { getToken } = storeToRefs(authStore)
+
+    const onSubmit = (event: Event) => {
         event.preventDefault();
-        fetch('http://localhost:3000/api/user/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: (event.target as HTMLFormElement).email.value,
-                password: (event.target as HTMLFormElement).password.value
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
+        console.log('formData', formData)
+        console.log('getToken', getToken.value)
+    }
+
+    const onFieldChange = ({ id, val }:{ id: string, val: string }) => {
+        console.log('id', id)
+        console.log('val', val)
     }
 </script>
 
@@ -42,7 +43,8 @@
             :formLegend="formData.formLegend"
             :fields="formData.fields"
             :actions="formData.actions"
-            :onSubmit="onsubmit"
+            @fieldChange="onFieldChange"
+            :onSubmit="onSubmit"
         />
     </main>
 </template>
