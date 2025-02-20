@@ -42,10 +42,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-            role: user.role,
-            expiresIn: '1h'
-        });
+        const token = jwt.sign({
+            id: user.id,
+            role: user?.role || 'user',
+        }, process.env.JWT_SECRET, {expiresIn: '1h'});
 
         res.status(200).json({ token });
     } catch (err) {
@@ -75,9 +75,6 @@ router.post('/register', email, password, validationResult, async (req, res) => 
     }
 });
 
-router.use(auth);
-// protected API (only authenticated users can access)
-
 router.post('/', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -94,11 +91,12 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.use(auth);
+// protected API (only authenticated users can access)
+
 router.delete('/', async (req, res) => {
-    const {
-        body: { userId },
-        auth: { authUserId, authRole }
-    } = req;
+    const userId = req.body.id;
+    const authUserId = req.auth.id;
 
     if (!userId) {
         res.status(400).json({ error: 'User ID is required' });
