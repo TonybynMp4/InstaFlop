@@ -7,15 +7,26 @@
             <li>
                 <router-link to="/">Home</router-link>
             </li>
-            <li>
+            <li v-if="!isLoggedIn">
+                <router-link to="/register">Register</router-link>
+            </li>
+            <li v-if="!isLoggedIn">
                 <router-link to="/login">Login</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+                <router-link to="/logout">Logout</router-link>
             </li>
         </ul>
     </header>
     <router-view></router-view>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    import { computed } from 'vue';
+    import useAuthStore from './stores/auth-store';
+    const authStore = useAuthStore();
+    const isLoggedIn = computed(() => authStore.getToken !== null);
+</script>
 
 <style>
     header {

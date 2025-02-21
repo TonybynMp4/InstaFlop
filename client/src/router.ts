@@ -18,7 +18,8 @@ const router = createRouter({
         },
         {
             path: '/logout',
-            redirect: '/login'
+            component: () => import('./pages/LogoutPage.vue'),
+            meta: { requiresAuth: true },
         },
         {
             path: '/dashboard',
@@ -32,19 +33,14 @@ router.beforeEach((to, _, next) => {
     const authStore = useAuthStore();
     const isLoggedIn = authStore.getToken ?? false;
 
-    console.log('isLoggedIn:', isLoggedIn);
 
     if (to.meta.requiresAuth && !isLoggedIn) {
         return next('/login');
     } else if (isLoggedIn) {
-        if (to.path === '/login' || to.path === '/register')
+        if (to.path === '/login' || to.path === '/register') {
             return next('/dashboard');
-        else if (to.path === '/logout') {
-            if (authStore.logout())
-                return next('/login');
-            else
-                console.error('Logout failed');
-                return next('/dashboard');
+        } else if (to.path === '/logout') {
+            return next();
         }
     }
 

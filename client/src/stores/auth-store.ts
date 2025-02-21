@@ -9,38 +9,39 @@ const useAuthStore = defineStore('auth', () => {
 
     const getToken = computed(() => token.value);
 
-    function login(credentials: { email: string, password: string }) {
-        fetch(baseURL + '/api/user/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credentials),
-        })
-            .then(response => response.json())
-            .then(response => {
-                if (response.ok) {
-                    token.value = response.token;
-                    localStorage.setItem('token', response.token);
+    async function login(credentials: { email: string, password: string }) {
+        try {
+            const response = await fetch(baseURL + '/api/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credentials),
+            }).then((res) => res.json());
 
-                    return router.push('/dashboard');
-                } else {
-                    console.error(response);
-                    console.error('Login failed:', response.message);
+            if (response.token) {
+                token.value = response.token;
+                localStorage.setItem('token', response.token);
 
-                    return response.message;
-                }
-            }).catch(error => {
-                console.error('Login error:', error);
-
-                return error;
-            });
+                return router.push('/dashboard');
+            } else {
+                return response.message;
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            return error;
+        }
     }
 
     function logout() {
+        console.log('logout');
+        token.value = null;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        token.value = null;
 
-        return true;
+        if (getToken.value === null) {
+            return true
+        }
+
+        return false
     }
 
     return { token, getToken, login, logout };
