@@ -1,12 +1,12 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import { useUserStore } from '../stores/user-store';
+    import useAuthStore from '../stores/auth-store';
 
-    const userStore = useUserStore()
-    const user = userStore.getUser()
+    const authStore = useAuthStore()
+    const user = authStore.getUser;
     const userData = ref({
-        email: user?.email || '',
-        role: user?.role || 'user'
+        email: user?.email ?? '',
+        role: user?.role ?? 'user'
     });
 
 </script>
@@ -24,4 +24,8 @@
 </template>
 
 <style scoped>
+main {
+    width: 80%;
+    margin: 2.5% auto;
+}
 </style>

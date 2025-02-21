@@ -21,10 +21,18 @@ type ButtonComponent = {
     className?: string;
     style?: string;
     disabled?: boolean;
+    onClick?: (event: Event) => void;
 };
+
+interface User {
+    username: string;
+    email: string;
+    role: string;
+}
 
 export type {
     FormComponent,
     FieldComponent,
-    ButtonComponent
+    ButtonComponent,
+    User
 }

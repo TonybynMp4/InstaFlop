@@ -5,16 +5,19 @@
         </h1>
         <ul>
             <li>
-                <router-link to="/">Home</router-link>
+                <router-link class="button" to="/">Home</router-link>
             </li>
             <li v-if="!isLoggedIn">
-                <router-link to="/register">Register</router-link>
+                <router-link class="button" to="/register">Register</router-link>
             </li>
             <li v-if="!isLoggedIn">
-                <router-link to="/login">Login</router-link>
+                <router-link class="button" to="/login">Login</router-link>
             </li>
             <li v-if="isLoggedIn">
-                <router-link to="/logout">Logout</router-link>
+                <router-link class="button" to="/dashboard">Dashboard</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+                <ButtonComponent :id="'logout'" :label="'Logout'" @click="onClickLogout" />
             </li>
         </ul>
     </header>
@@ -24,8 +27,10 @@
 <script setup lang="ts">
     import { computed } from 'vue';
     import useAuthStore from './stores/auth-store';
+    import ButtonComponent from './components/ButtonComponent.vue';
     const authStore = useAuthStore();
     const isLoggedIn = computed(() => authStore.getToken !== null);
+    const onClickLogout = () => authStore.logout();
 </script>
 
 <style>
@@ -38,18 +43,14 @@
         justify-content: space-between;
         align-items: center;
     }
-    ul {
+
+    header ul {
         display: flex;
         gap: 1rem;
+        margin: 0;
     }
-    li {
+
+    header ul li {
         list-style: none;
-    }
-    a {
-        text-decoration: none;
-        color: #333;
-    }
-    a:hover {
-        text-decoration: underline;
     }
 </style>

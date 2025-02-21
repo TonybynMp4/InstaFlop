@@ -17,11 +17,6 @@ const router = createRouter({
             component: () => import('./pages/RegisterPage.vue')
         },
         {
-            path: '/logout',
-            component: () => import('./pages/LogoutPage.vue'),
-            meta: { requiresAuth: true },
-        },
-        {
             path: '/dashboard',
             component: () => import('./pages/DashboardPage.vue'),
             meta: { requiresAuth: true },
@@ -33,15 +28,10 @@ router.beforeEach((to, _, next) => {
     const authStore = useAuthStore();
     const isLoggedIn = authStore.getToken ?? false;
 
-
     if (to.meta.requiresAuth && !isLoggedIn) {
         return next('/login');
-    } else if (isLoggedIn) {
-        if (to.path === '/login' || to.path === '/register') {
-            return next('/dashboard');
-        } else if (to.path === '/logout') {
-            return next();
-        }
+    } else if (isLoggedIn && to.path === '/login' || to.path === '/register') {
+        return next('/dashboard');
     }
 
     return next();
