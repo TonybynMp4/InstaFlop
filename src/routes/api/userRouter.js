@@ -45,19 +45,19 @@ router.post('/register', email, password, validationResult, async (req, res) => 
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-        res.status(400).json({ error: 'All fields are required' });
+        res.status(400).json({ errors: {msg: 'All fields are required'} });
         return;
     }
 
     try {
         const user = await User.getByEmail(email);
         if (user) {
-            res.status(400).json({ error: 'Email already registered' });
+            res.status(400).json({ errors: {msg:  'Email already exists'} });
             return;
         }
 
-        const newUser = await User.create(req.body);
-        res.status(201).json(newUser);
+        const newUser = await User.create(username, email, password);
+        res.status(201).json({ok: true, newUser});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -103,7 +103,7 @@ router.get('/', async (req, res) => {
 
 router.delete('/', async (req, res) => {
     const userId = req.body.id;
-    const authUserId = req.auth.id;
+    const { id: authUserId, role: authUserRole } = req.auth;
 
     if (!userId) {
         res.status(400).json({ error: 'User ID is required' });
@@ -115,7 +115,7 @@ router.delete('/', async (req, res) => {
         return;
     }
 
-    if (authUserId !== userId) {
+    if (authUserId !== userId && authUserRole !== 'admin') {
         res.status(403).json({ error: 'Forbidden' });
         return;
     }
@@ -132,12 +132,18 @@ router.delete('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
+    const authUserId = req.auth.id;
     const { id, username, email } = req.body;
 
     if (!id)
         res.status(400).json({ error: 'User ID is required' });
     else if (!username && !email) {
-        res.status(400).json({ error: 'return at least one field to update' });
+        res.status(400).json({ error: 'At least one field is required' });
+    }
+
+    if (!authUserId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
     }
 
     try {

@@ -14,6 +14,10 @@ class User {
     }
 
     static async getById(id) {
+        if (!id) {
+            throw new Error('id is required');
+        }
+
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
                 if(err)
@@ -25,6 +29,10 @@ class User {
     }
 
     static async getByEmail(email) {
+        if (!email) {
+            throw new Error('Email is required');
+        }
+
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM users WHERE email = ?', [email], (err, rows) => {
                 if(err)
@@ -35,7 +43,11 @@ class User {
         });
     }
 
-    static async create({ username, email, password }) {
+    static async create(username, email, password) {
+        if (!username || !email || !password) {
+            throw new Error('All fields are required');
+        }
+
         password = bcrypt.hashSync(password, 10);
 
         return new Promise((resolve, reject) => {
@@ -48,9 +60,13 @@ class User {
         });
     }
 
-    // username and email are optional
-    static async update(id, { username, email }) {
-        if (!username && !email) {
+    // username, email and password are optional
+    static async update(id, { username, email, password }) {
+        if (!id) {
+            throw new Error('id is required');
+        }
+
+        if (!username && !email && !password) {
             throw new Error('At least one field is required');
         }
 
@@ -67,6 +83,12 @@ class User {
             if (email) {
                 fields.push('email = ?');
                 values.push(email);
+            }
+
+            if (password) {
+                password = bcrypt.hashSync(password, 10);
+                fields.push('password = ?');
+                values.push(password);
             }
 
             query += fields.join(', ') + ' WHERE id = ?';
@@ -86,6 +108,10 @@ class User {
     }
 
     static async delete(id) {
+        if (!id) {
+            throw new Error('id is required');
+        }
+
         return new Promise((resolve, reject) => {
             db.query('DELETE FROM users WHERE id = ? RETURNING *', [id], (err, rows) => {
                 if(err)
