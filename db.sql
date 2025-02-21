@@ -56,6 +56,9 @@ CREATE TABLE IF NOT EXISTS followers (
     PRIMARY KEY (follower_id, following_id)
 );
 
-CREATE USER 'Instaflop'@'localhost' IDENTIFIED BY 'PASSWORD';
-GRANT ALL PRIVILEGES ON Instaflop.* TO 'Instaflop'@'localhost';
+CREATE USER 'Instaflop'@'localhost'
+/* Change this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+IDENTIFIED BY 'Instaflop';
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON Instaflop.* TO 'Instaflop'@'localhost';
 FLUSH PRIVILEGES;
