@@ -21,13 +21,9 @@
         ]
     });
 
-    const authStore  = useAuthStore()
-    const { getToken } = storeToRefs(authStore)
-
     const onSubmit = (event: Event) => {
         event.preventDefault();
         const authStore = useAuthStore();
-        const { getToken } = storeToRefs(authStore);
 
         authStore.login({
             email: (event.target as HTMLFormElement).email.value,
