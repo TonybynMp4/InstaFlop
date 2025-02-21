@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `Node`;
+CREATE DATABASE IF NOT EXISTS `Instaflop`;
 
-USE `Node`;
+USE `Instaflop`;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,3 +55,7 @@ CREATE TABLE IF NOT EXISTS followers (
     FOREIGN KEY (following_id) REFERENCES users(id),
     PRIMARY KEY (follower_id, following_id)
 );
+
+CREATE USER 'Instaflop'@'localhost' IDENTIFIED BY 'PASSWORD';
+GRANT ALL PRIVILEGES ON Instaflop.* TO 'Instaflop'@'localhost';
+FLUSH PRIVILEGES;
