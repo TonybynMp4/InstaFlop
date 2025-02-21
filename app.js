@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv')
-const path = require('path');
 const cors = require('cors');
 const app = express();
 
@@ -11,4 +10,4 @@ const apiRouter = require("./src/routes/api/api.js");
 app.use("/api", apiRouter);
 app.use(express.static('client/dist'));
 
-module.exports = app.set('port', process.env.PORT ?? 3000).set('host', process.env.HOST);
+module.exports = app;

@@ -1,12 +1,8 @@
 const app = require('./app');
-const serverless = require('serverless-http');
+app.set('port', process.env.PORT ?? 3000).set('host', process.env.HOST);
 
-module.exports.handler = serverless(app);
-
-
-/* good ol' Node.js way
+// good ol' Node.js way
 const port = app.get('port');
 app.listen(port, () => {
     console.log(`Server listening on ${app.get('host')} ${port}`);
 });
-*/
