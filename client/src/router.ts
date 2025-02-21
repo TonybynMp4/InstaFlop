@@ -30,7 +30,7 @@ router.beforeEach((to, _, next) => {
 
     if (to.meta.requiresAuth && !isLoggedIn) {
         return next('/login');
-    } else if (isLoggedIn && to.path === '/login' || to.path === '/register') {
+    } else if (isLoggedIn && (to.path === '/login' || to.path === '/register')) {
         return next('/dashboard');
     }
 
