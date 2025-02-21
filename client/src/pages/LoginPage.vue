@@ -3,7 +3,6 @@
     import FormComponent from '../components/FormComponent.vue';
     import type { ButtonComponent, FieldComponent } from '../types';
     import useAuthStore from '../stores/auth-store';
-    import { storeToRefs } from 'pinia';
 
     const formData = reactive<{
         formLegend: string;

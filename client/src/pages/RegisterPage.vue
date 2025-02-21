@@ -3,7 +3,7 @@
     import FormComponent from '../components/FormComponent.vue';
     import type { ButtonComponent, FieldComponent } from '../types';
     import baseURL from '../baseUrl';
-import { useRouter } from 'vue-router';
+    import { useRouter } from 'vue-router';
 
     const formData = reactive<{
         formLegend: string;
@@ -34,7 +34,7 @@ import { useRouter } from 'vue-router';
             })
         })
             .then(response => response.json())
-            .then(data => {
+            .then(_ => {
                 const router = useRouter()
                 router.push('/login')
             })
