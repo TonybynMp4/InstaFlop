@@ -51,7 +51,7 @@ fieldset {
     gap: 1rem;
 }
 
-#login {
+.actions button {
     flex: 1 1 auto;
 }
 
