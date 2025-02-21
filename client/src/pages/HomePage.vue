@@ -1,8 +1,5 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import { useRouter } from 'vue-router';
-
-    const router = useRouter();
 
     //calculer le temps restant avant le 2 avril 2025 14h
     const timeLeft = ref('');
