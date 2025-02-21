@@ -2,3 +2,5 @@ node_modules
 dist
 documents
 .env
+# Local Netlify folder
+.netlify
