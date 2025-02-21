@@ -4,14 +4,16 @@
     import type { ButtonComponent, FieldComponent } from '../types';
     import baseURL from '../baseUrl';
     import { useRouter } from 'vue-router';
+    const router = useRouter()
 
     const formData = reactive<{
         formLegend: string;
         fields: FieldComponent[];
         actions: ButtonComponent[];
     }>({
-        formLegend: 'Register',
+        formLegend: 'Créer un compte',
         fields: [
+            { id: 'username', label: 'Username', placeholder: 'Username', type: 'text', required: true },
             { id: 'email', label: 'Email', placeholder: 'Email', type: 'email', required: true },
             { id: 'password', label: 'Password', placeholder: 'Password', type: 'password', minLength: 8, required: true }
         ],
@@ -30,12 +32,20 @@
             },
             body: JSON.stringify({
                 email: (event.target as HTMLFormElement).email.value,
+                username: (event.target as HTMLFormElement).username.value,
                 password: (event.target as HTMLFormElement).password.value
             })
         })
-            .then(response => response.json())
-            .then(_ => {
-                const router = useRouter()
+            .then(response => {
+                return response.json()
+            })
+            .then(response => {
+                console.log('Success:', response);
+                if (!response.ok) {
+                    console.error('Error:', response.errors);
+                    return;
+                }
+
                 router.push('/login')
             })
     }

@@ -14,7 +14,7 @@ const handleFieldChange = (payload: { id: string, val: string }) => {
 <template>
     <form v-on:submit="onSubmit">
         <fieldset>
-            <legend>Login</legend>
+            <legend>{{ formLegend }}</legend>
 
             <FieldComponent v-for="field in fields" :key="field.id" :id="field.id" :label="field.label"
             @fieldChange="handleFieldChange"
