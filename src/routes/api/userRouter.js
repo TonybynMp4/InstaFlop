@@ -16,18 +16,6 @@ router.get('/getUsers', async (req, res) => {
     }
 });
 
-router.get('/getUser/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const user = await User.getById(id);
-        if (user)
-            res.status(200).json(user);
-        else
-            res.status(404).json({ message: 'User not found' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -45,7 +33,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({
             id: user.id,
             role: user?.role || 'user',
-        }, process.env.JWT_SECRET, {expiresIn: '1h'});
+        }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ token });
     } catch (err) {
@@ -93,6 +81,25 @@ router.post('/', async (req, res) => {
 
 router.use(auth);
 // protected API (only authenticated users can access)
+router.get('/', async (req, res) => {
+    const authUserId = req.auth.id;
+
+    if (!authUserId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+    }
+
+    try {
+        const user = await User.getById(authUserId);
+        if (user)
+            res.status(200).json(user);
+        else
+            res.status(404).json({ message: 'User not found' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 router.delete('/', async (req, res) => {
     const userId = req.body.id;
@@ -129,7 +136,7 @@ router.put('/', async (req, res) => {
 
     if (!id)
         res.status(400).json({ error: 'User ID is required' });
-    else if (!username &&!email) {
+    else if (!username && !email) {
         res.status(400).json({ error: 'return at least one field to update' });
     }
 
