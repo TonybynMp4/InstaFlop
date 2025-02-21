@@ -2,42 +2,42 @@
     import { reactive } from 'vue';
     import FormComponent from '../components/FormComponent.vue';
     import type { ButtonComponent, FieldComponent } from '../types';
-    import useAuthStore from '../stores/auth-store';
-    import { storeToRefs } from 'pinia';
+    import baseURL from '../baseUrl';
+import { useRouter } from 'vue-router';
 
     const formData = reactive<{
         formLegend: string;
         fields: FieldComponent[];
         actions: ButtonComponent[];
     }>({
-        formLegend: 'Login',
+        formLegend: 'Register',
         fields: [
             { id: 'email', label: 'Email', placeholder: 'Email', type: 'email', required: true },
             { id: 'password', label: 'Password', placeholder: 'Password', type: 'password', minLength: 8, required: true }
         ],
         actions: [
-            { id: 'login', label: 'Login' },
+            { id: 'register', label: 'Créer un compte' },
             { id: 'reset', label: 'Reset', type: 'reset' }
         ]
     });
 
-    const authStore  = useAuthStore()
-    const { getToken } = storeToRefs(authStore)
-
-    const onSubmit = (event: Event) => {
+    function onsubmit(event: Event) {
         event.preventDefault();
-        const authStore = useAuthStore();
-        const { getToken } = storeToRefs(authStore);
-
-        authStore.login({
-            email: (event.target as HTMLFormElement).email.value,
-            password: (event.target as HTMLFormElement).password.value
-        });
-    }
-
-    const rFormData = reactive({}) as { [key: string]: string };
-    const onFieldChange = ({ id, val }: { id: string, val: string }) => {
-        rFormData[id] = val;
+        fetch(baseURL + '/api/user/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: (event.target as HTMLFormElement).email.value,
+                password: (event.target as HTMLFormElement).password.value
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const router = useRouter()
+                router.push('/login')
+            })
     }
 </script>
 
@@ -47,8 +47,7 @@
             :formLegend="formData.formLegend"
             :fields="formData.fields"
             :actions="formData.actions"
-            @fieldChange="onFieldChange"
-            :onSubmit="onSubmit"
+            :onSubmit="onsubmit"
         />
     </main>
 </template>
