@@ -1,5 +1,5 @@
 # InstaFlop
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a9593413-d6c7-4802-9cc0-f5b0626af64d/deploy-status)](https://app.netlify.com/sites/instaflop/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a9593413-d6c7-4802-9cc0-f5b0626af64d/deploy-status?branch=main)](https://instaflop.fr)
 
 Instagram-like app for sharing photos and videos.
 
@@ -30,3 +30,4 @@ Instagram-like app for sharing photos and videos.
 - [ ] Post like
 - [ ] Post comment
 - [ ] Post share?
+
