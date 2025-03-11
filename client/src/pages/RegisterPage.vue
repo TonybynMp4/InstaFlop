@@ -40,13 +40,15 @@
                 return response.json()
             })
             .then(response => {
-                console.log('Success:', response);
-                if (!response.ok) {
-                    console.error('Error:', response.errors);
+                if (!response.ok || response.errors) {
+                    console.error('Custom errors:', response.errors, "Server error:", response.error);
+                    alert('An error occurred, please try again.');
                     return;
                 }
+                console.log('Success:', response);
 
-                router.push('/login')
+                router.push('/login');
+                alert('Registration successful! You can now log in.');
             })
     }
     /* TODO: error handling (console log c'pas très user friendly) */
