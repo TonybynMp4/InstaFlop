@@ -16,6 +16,7 @@ function getDatabaseConnection() {
         return db;
     } catch (err) {
         console.error('Error connecting to the database: ', err);
+        return null;
     }
 }
 
@@ -27,4 +28,4 @@ if (!db) {
 
 db.config.namedPlaceholders = true;
 
-export default db;
+module.exports = db;
