@@ -1,12 +1,11 @@
-import User from '../../models/user.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { email, password } from '../../middlewares/validators.js';
-import validationResult from '../../middlewares/validationResult.js';
-import auth from '../../middlewares/auth.js';
-import { Router } from 'express';
+const router = require('express').Router();
+const User = require('../../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { email, password } = require('../../middlewares/validators');
+const validationResult = require('../../middlewares/validationResult');
+const auth = require('../../middlewares/auth');
 
-const router = Router();
 // public API
 router.get('/getUsers', async (req, res) => {
     try {
@@ -158,4 +157,4 @@ router.put('/', async (req, res) => {
     }
 });
 
-export default router;
+module.exports = router;

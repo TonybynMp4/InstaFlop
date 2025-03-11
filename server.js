@@ -1,5 +1,4 @@
-import app from './app.js';
-
+const app = require('./app');
 app.set('port', process.env.PORT ?? 3000).set('host', process.env.HOST);
 
 // good ol' Node.js way

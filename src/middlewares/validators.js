@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+const { body } = require("express-validator");
 
 const Validators = {
     email: body('email').notEmpty().trim().isEmail().withMessage('Invalid email'),
@@ -10,6 +10,4 @@ const Validators = {
     }).withMessage('Password is too weak'),
 }
 
-export default Validators;
-export const email = Validators.email;
-export const password = Validators.password;
+module.exports = Validators;

@@ -49,8 +49,6 @@
                 router.push('/login')
             })
     }
-
-    /* TODO: error handling (console log c'pas très user friendly) */
 </script>
 
 <template>

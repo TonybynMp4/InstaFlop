@@ -1,7 +1,7 @@
-import { Router } from 'express';
+const express = require('express');
 
-const router = Router();
-router.use('/user', (await import('./userRouter.js')).default);
-router.use('/post', (await import('./postRouter.js')).default);
+const router = express.Router();
+router.use('/user', require('./userRouter'));
+router.use('/post', require('./postRouter'));
 
-export default router;
+module.exports = router;
