@@ -1,7 +1,7 @@
-const Post = require('../../models/post');
+import { Router } from 'express';
+import Post from '../../models/post.js';
 
-const router = require('express').Router();
-
+const router = Router();
 // public API
 router.get('/getPosts', async (req, res) => {
     try {
@@ -46,4 +46,4 @@ router.post('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

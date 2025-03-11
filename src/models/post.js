@@ -1,4 +1,4 @@
-const db = require('./db')
+import db from './db.js';
 
 async function getRelatedData(table, foreignKey, id) {
     return new Promise((resolve, reject) => {
@@ -106,4 +106,4 @@ class Post {
     }
 }
 
-module.exports = Post;
+export default Post;

@@ -1,5 +1,5 @@
-const db = require('./db')
-const bcrypt = require('bcrypt');
+import db from './db.js';
+import bcrypt from 'bcrypt';
 
 class User {
     static async getAll() {
@@ -123,4 +123,4 @@ class User {
     }
 }
 
-module.exports = User;
+export default User;
