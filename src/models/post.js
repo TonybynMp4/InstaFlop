@@ -2,7 +2,7 @@ const db = require('./db')
 
 async function getRelatedData(table, foreignKey, id) {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT * from ${table} WHERE ${foreignKey} = ?`, [id], (err, data) => {
+        db.execute(`SELECT * from ${table} WHERE ${foreignKey} = ?`, [id], (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -37,7 +37,7 @@ class Post {
 
     static async getById(id, { withMedia = false, withComments = false, withLikes = false }) {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
+            db.execute('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
                 if (err)
                     reject(err);
                 else
@@ -58,7 +58,7 @@ class Post {
 
     static async create({ title, description, user_id }) {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?) RETURNING *', [title, description, user_id], (err, rows) => {
+            db.execute('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?) RETURNING *', [title, description, user_id], (err, rows) => {
                 if (err)
                     reject(err);
                 else
@@ -69,7 +69,7 @@ class Post {
 
     static async delete(id) {
         return new Promise((resolve, reject) => {
-            db.query('DELETE FROM posts WHERE id = ? RETURNING *', [id], (err, rows) => {
+            db.execute('DELETE FROM posts WHERE id = ? RETURNING *', [id], (err, rows) => {
                 if (err)
                     reject(err);
                 else
@@ -96,7 +96,7 @@ class Post {
                 values.push(description);
             }
             query += fields.join(', ') + ' WHERE id = ? RETURNING *';
-            db.query(query, [...values, id], (err, rows) => {
+            db.execute(query, [...values, id], (err, rows) => {
                 if (err)
                     reject(err);
                 else

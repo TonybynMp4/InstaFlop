@@ -19,7 +19,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
+            db.execute('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -34,7 +34,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.query('SELECT * FROM users WHERE email = ?', [email], (err, rows) => {
+            db.execute('SELECT * FROM users WHERE email = ?', [email], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -51,7 +51,7 @@ class User {
         password = bcrypt.hashSync(password, 10);
 
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?) RETURNING *', [username, email, password], (err, rows) => {
+            db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?) RETURNING *', [username, email, password], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -94,7 +94,7 @@ class User {
             query += fields.join(', ') + ' WHERE id = ?';
             values.push(id);
 
-            db.query(query, values, (err, result) => {
+            db.execute(query, values, (err, result) => {
                 if(err)
                     return reject(err);
 
@@ -113,7 +113,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.query('DELETE FROM users WHERE id = ? RETURNING *', [id], (err, rows) => {
+            db.execute('DELETE FROM users WHERE id = ? RETURNING *', [id], (err, rows) => {
                 if(err)
                     reject(err);
                 else
