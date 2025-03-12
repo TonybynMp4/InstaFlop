@@ -11,7 +11,7 @@ app
 .use(express.json({limit: '50mb'}))
 .use(express.urlencoded({ extended: true }));
 
-const apiRouter = require("./src/routes/api/api.js");
+const apiRouter = require("./src/routes/api.js");
 app.use("/api", apiRouter);
 app.use(express.static('client/dist'));
 
