@@ -58,22 +58,35 @@ class Post {
 
     static async create({ title, description, user_id }) {
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?) RETURNING *', [title, description, user_id], (err, rows) => {
+            db.execute('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)', [title, description, user_id], (err, rows) => {
                 if (err)
                     reject(err);
-                else
-                    resolve(rows);
+                else {
+                    if (rows.affectedRows === 0)
+                        reject(new Error('post not created'));
+                    else
+                        db.execute('SELECT * FROM posts WHERE id = ?', [rows.insertId], (err, rows) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(rows[0]);
+                        });
+                }
             });
         });
     }
 
     static async delete(id) {
         return new Promise((resolve, reject) => {
-            db.execute('DELETE FROM posts WHERE id = ? RETURNING *', [id], (err, rows) => {
+            db.execute('DELETE FROM posts WHERE id = ?', [id], (err, rows) => {
                 if (err)
                     reject(err);
-                else
-                    resolve(rows[0]);
+                else {
+                    if (rows.affectedRows === 0)
+                        reject(new Error('post not found'));
+                    else
+                        resolve(true);
+                }
             });
         });
     }
@@ -95,12 +108,21 @@ class Post {
                 fields.push('description = ?');
                 values.push(description);
             }
-            query += fields.join(', ') + ' WHERE id = ? RETURNING *';
+            query += fields.join(', ') + ' WHERE id = ?';
             db.execute(query, [...values, id], (err, rows) => {
                 if (err)
                     reject(err);
-                else
-                    resolve(rows[0]);
+                else {
+                    if (rows.affectedRows === 0)
+                        reject(new Error('post not found'));
+                    else
+                        db.execute('SELECT * FROM posts WHERE id = ?', [id], (err, rows) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(rows[0]);
+                        });
+                }
             });
         });
     }

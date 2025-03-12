@@ -51,11 +51,20 @@ class User {
         password = bcrypt.hashSync(password, 10);
 
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?) RETURNING *', [username, email, password], (err, rows) => {
+            db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, password], (err, rows) => {
                 if(err)
                     reject(err);
-                else
-                    resolve(rows);
+                else {
+                    if (rows.affectedRows === 0)
+                        reject(new Error('user not created'));
+                    else
+                        db.execute('SELECT id, username FROM users WHERE id = ?', [rows.insertId], (err, rows) => {
+                            if(err)
+                                reject(err);
+                            else
+                                resolve(rows[0]);
+                        });
+                }
             });
         });
     }
@@ -113,11 +122,15 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('DELETE FROM users WHERE id = ? RETURNING *', [id], (err, rows) => {
+            db.execute('DELETE FROM users WHERE id = ?', [id], (err, rows) => {
                 if(err)
                     reject(err);
-                else
-                    resolve(rows[0]);
+                else {
+                    if (rows.affectedRows === 0)
+                        reject(new Error('user not found'));
+                    else
+                        resolve(rows);
+                }
             });
         });
     }
