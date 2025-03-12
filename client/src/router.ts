@@ -1,11 +1,16 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import useAuthStore from './stores/auth-store';
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
+            component: () => import('./pages/LandingPage.vue')
+        },
+        {
+
+            path: '/home',
             component: () => import('./pages/HomePage.vue')
         },
         {
@@ -18,7 +23,7 @@ const router = createRouter({
         },
         {
             path: '/dashboard',
-            component: () => import('./pages/DashboardPage.vue'),
+            component: () => import('./pages/ProfilePage.vue'),
             meta: { requiresAuth: true },
         },
     ],

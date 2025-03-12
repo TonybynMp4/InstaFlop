@@ -1,5 +1,9 @@
 const app = require('./app');
-app.set('port', process.env.PORT ?? 3000).set('host', process.env.HOST);
+const history = require('connect-history-api-fallback')
+app
+.use(history())
+.set('port', process.env.PORT ?? 3000)
+.set('host', process.env.HOST);
 
 // good ol' Node.js way
 const port = app.get('port');
