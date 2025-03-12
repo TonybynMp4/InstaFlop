@@ -1,40 +1,64 @@
 <script setup lang="ts">
     import { ref } from 'vue';
 
-    //calculer le temps restant avant le 2 avril 2025 14h
-    const timeLeft = ref('');
-
-    const calculateTimeLeft = () => {
-        const difference = +new Date('2025-04-02 14:00') - +new Date();
-
-        if (difference <= 0) {
-            timeLeft.value = 'C\'est toujours là? Oh la sauce..';
-            return;
-        }
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((difference / 1000 / 60) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-        timeLeft.value = `${days} jours, ${hours} heures, ${minutes} minutes, ${seconds} secondes`;
-    };
-
-    calculateTimeLeft();
-    setInterval(calculateTimeLeft, 1000);
-
+    const posts = ref([
+        {
+            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
+            image: '/images/kyoto.jpg',
+        },
+        {
+            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
+            image: '/images/newyork.jpg',
+        },
+        {
+            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
+            image: '/images/logo.png',
+        },
+        {
+            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
+            image: '/images/logo.png',
+        },
+        {
+            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
+            image: '/images/logo.png',
+        },
+    ]);
 </script>
 
 <template>
     <main>
-        <h1>Bienvenue sur le pire réseau social du monde</h1>
+        <section id="feed">
+            <h2>Suivis</h2>
+            <div id="post-form">
+                <textarea name="post" id="post" cols="30" rows="3" placeholder="Raconte ta vie.."></textarea>
+                <button>Publier</button>
+            </div>
+            <article v-for="post in posts" :key="post.content">
+                <div class="post_main">
+                    <img class="post_image" :src="post.image" alt="post image" />
+                    <p>{{ post.content }}</p>
+                </div>
+                <div class="post_aside">
+                    <div class="post_comment_section">
+                        <article class="post_comment">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
+                        </article>
+                        <article class="post_comment">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
+                        </article>
+                        <article class="post_comment">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
+                        </article>
+                        <article class="post_comment">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
+                        </article>
+                    </div>
+                </div>
+            </article>
+        </section>
+        <section>
 
-        <p>
-            WIP: ce projet est encore en cours de développement!
-        </p>
-        <p style="font-size: 1.5rem; font-weight: bold;">
-            Temps restant avant qu'on flop le cours de Node.js:
-        </p>
-        <time style="font-size: 2rem; font-weight: bold;">{{ timeLeft }}</time>
+        </section>
     </main>
 </template>
 
@@ -44,5 +68,75 @@
         flex-direction: column;
         gap: 1rem;
         align-items: center;
+    }
+
+    #feed {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        width: 80%;
+    }
+
+    #post-form {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #feed > article {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        width: 90%;
+        border: 1px solid #000;
+        padding: 1rem;
+        background-color: #0f0f0f;
+        border-radius: 1rem;
+    }
+
+    .post_main {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        justify-items: flex-start;
+        width: 100%;
+    }
+
+    .post_aside {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 70%;
+    }
+
+    .post_image {
+        width: 100%;
+        height: auto;
+    }
+
+    .post_comment_section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        font-size: smaller;
+    }
+
+    .post_comment {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        width: 100%;
+        border: 1px solid #fff;
+        padding-block: 0.5rem;
+        padding-inline: 0.5rem;
+        background-color: #3f3f3f;
+        border-radius: 1rem;
+    }
+
+    p {
+        margin: 0;
     }
 </style>
