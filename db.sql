@@ -4,6 +4,7 @@ USE `instaflop`;
 
 CREATE TABLE IF NOT EXISTS users (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `userId` VARCHAR(255) NOT NULL UNIQUE KEY DEFAULT (UUID()),
     `email` VARCHAR(255) NOT NULL UNIQUE,
     `username` VARCHAR(255) NOT NULL,
     `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user',

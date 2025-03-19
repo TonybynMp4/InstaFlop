@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    const { authorization } = req.headers;
-
-    if (!authorization) {
-        return res.status(401).json({ error: 'Authorization header is required' });
+    const cookies = req.cookies;
+    console.log(cookies);
+    if (!cookies) {
+        return res.status(401).json({ error: 'Cookies are required' });
     }
-    const token = authorization.split(' ')[1];
+
+
+    const token = cookies.token;
     if (!token) {
         return res.status(401).json({ error: 'Token is required' });
     }
