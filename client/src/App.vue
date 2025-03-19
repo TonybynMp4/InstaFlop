@@ -22,6 +22,9 @@
         </ul>
     </header>
     <router-view></router-view>
+    <footer>
+        <p>&copy; 2025 InstaFlop</p>
+    </footer>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +32,7 @@
     import useAuthStore from './stores/auth-store';
     import ButtonComponent from './components/ButtonComponent.vue';
     const authStore = useAuthStore();
-    const isLoggedIn = computed(() => authStore.getToken !== null);
+    const isLoggedIn = computed(() => authStore.getUser() !== null);
     const onClickLogout = () => authStore.logout();
 </script>
 

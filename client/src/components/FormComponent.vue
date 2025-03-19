@@ -18,7 +18,7 @@ const handleFieldChange = (payload: { id: string, val: string }) => {
 
             <FieldComponent v-for="field in fields" :key="field.id" :id="field.id" :label="field.label"
             @fieldChange="handleFieldChange"
-            :placeholder="field.placeholder" :type="field.type" :required="field.required" />
+            :placeholder="field.placeholder" :type="field.type" :required="field.required" :defaultValue="field.defaultValue" />
 
             <section class="actions">
                 <ButtonComponent v-for="action in actions" :key="action.id" :id="action.id" :label="action.label"

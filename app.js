@@ -1,13 +1,23 @@
 const express = require('express');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const history = require('connect-history-api-fallback');
 const cors = require('cors');
 const app = express();
 
 dotenv.config();
-app.use(cors()).use(express.json({limit: '50mb'})).use(express.urlencoded({ extended: true }));
+app
+.use(cors({
+	origin: "http://localhost:5173",
+	credentials: true
+}))
+.use(express.json({limit: '50mb'}))
+.use(express.urlencoded({ extended: true }))
+.use(cookieParser());
 
-const apiRouter = require("./src/routes/api/api.js");
-app.use("/api", apiRouter);
-app.use(express.static('client/dist'));
+const apiRouter = require("./src/routes/index.js");
+app.use("/api", apiRouter)
+.use(history())
+.use(express.static('client/dist'));
 
 module.exports = app;
