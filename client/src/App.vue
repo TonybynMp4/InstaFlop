@@ -22,6 +22,9 @@
         </ul>
     </header>
     <router-view></router-view>
+    <footer>
+        <p>&copy; 2025 InstaFlop</p>
+    </footer>
 </template>
 
 <script setup lang="ts">

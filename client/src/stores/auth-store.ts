@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import baseURL from '../baseUrl';
+import baseURL from '@/baseUrl';
 import { useRouter } from 'vue-router';
-import type { User } from '../types';
+import type { User } from '@/types';
 
 const useAuthStore = defineStore('auth', () => {
     const token = ref<string | null>(localStorage.getItem('token'));
@@ -36,28 +36,29 @@ const useAuthStore = defineStore('auth', () => {
     const getUser = computed(() => user.value);
 
     async function readUser() {
-        const user = await fetch(baseURL + '/api/user', {
+        const user = await fetch(baseURL + '/api/user'/* , {
             headers: {
                 Authorization: `Bearer ${getToken.value}`
             },
-        }).then((res) => res.json());
+        } */).then((res) => res.json());
 
         return user;
     }
 
     async function login(credentials: { email: string, password: string }) {
         try {
-            const response: {
-                token: string
-            } = await fetch(baseURL + '/api/user/login', {
+            const response = await fetch(baseURL + '/api/user/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credentials),
             }).then((res) => res.json());
 
-            if (response.token) {
+            /*if (response.token) {
                 setToken(response.token);
                 localStorage.setItem('token', response.token);
+            */
+           console.log('Login:', response);
+            if (response) {
                 setUser(await readUser());
 
                 router.push('/dashboard');
