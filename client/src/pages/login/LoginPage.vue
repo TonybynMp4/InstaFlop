@@ -20,14 +20,21 @@
         ]
     });
 
-    const onSubmit = (event: Event) => {
+    const onSubmit = async (event: Event) => {
         event.preventDefault();
         const authStore = useAuthStore();
 
-        authStore.login({
+		const [success, error] = await authStore.login({
             email: (event.target as HTMLFormElement).email.value,
             password: (event.target as HTMLFormElement).password.value
         });
+
+        if (!success) {
+			//idk
+			if (error) {
+				//TODO: handle error
+			}
+        }
     }
 
     const rFormData = reactive({}) as { [key: string]: string };

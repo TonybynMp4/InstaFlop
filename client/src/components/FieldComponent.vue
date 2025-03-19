@@ -11,6 +11,7 @@
                 id: id,
                 val: event.target!.value
             })"
+			:value="defaultValue"
             :type="type ?? 'text'" :id="id" :name="id" :required="required" :placeholder="placeholder" :minlength="minLength" />
    </section>
 </template>
