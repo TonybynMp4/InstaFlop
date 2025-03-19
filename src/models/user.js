@@ -34,7 +34,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('SELECT username, email, password, role FROM users WHERE email = ?', [email], (err, rows) => {
+            db.execute('SELECT id, username, email, password, role FROM users WHERE email = ?', [email], (err, rows) => {
                 if(err)
                     reject(err);
                 else

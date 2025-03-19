@@ -35,11 +35,14 @@ router.post('/login', async (req, res) => {
             role: user?.role || 'user',
         }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.status(200).cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-        }).json({ user });
+		res.status(200).cookie('authToken', token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'strict',
+			maxAge: 3600000,
+		}).json({
+			user
+		});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

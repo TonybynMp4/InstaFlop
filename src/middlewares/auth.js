@@ -1,24 +1,20 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-    const cookies = req.cookies;
-    console.log(cookies);
-    if (!cookies) {
-        return res.status(401).json({ error: 'Cookies are required' });
-    }
+function authMiddleware(req, res, next) {
+	const cookies = req.cookies;
+	const token = cookies.authToken;
+	if (!cookies || !token) {
+		return res.status(401).json({ error: 'Cookies are required' });
+	}
 
+	const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const token = cookies.token;
-    if (!token) {
-        return res.status(401).json({ error: 'Token is required' });
-    }
+	if (!decoded) {
+		return res.status(401).json({ error: 'Invalid token' });
+	}
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (!decoded) {
-        return res.status(401).json({ error: 'Invalid token' });
-    }
-
-    req.auth = decoded;
-    next();
+	req.auth = decoded;
+	next();
 }
+
+module.exports = authMiddleware;
