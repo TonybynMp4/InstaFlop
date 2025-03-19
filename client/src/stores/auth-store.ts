@@ -5,95 +5,91 @@ import { useRouter } from 'vue-router';
 import type { User } from '@/types';
 
 const useAuthStore = defineStore('auth', () => {
-    const token = ref<string | null>(localStorage.getItem('token'));
-    const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
-    const router = useRouter();
+	const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
+	const router = useRouter();
 
-    function setToken(newToken: string | null) {
-        if (newToken === null) {
-            localStorage.removeItem('token');
-            token.value = null;
-            return token;
-        }
+	function setUser(newUser: User | null) {
+		user.value = newUser === null ? null : {
+			id: newUser.id,
+			username: newUser.username,
+			email: newUser.email,
+			role: newUser.role
+		};
 
-        token.value = newToken;
-        localStorage.setItem('token', newToken);
+		localStorage.setItem('user', JSON.stringify(user.value));
+		return user;
+	}
+	const getUser = computed(() => user.value);
 
-        return token;
-    }
-    const getToken = computed(() => token.value);
+	async function readUser() {
+		console.log('Reading user from API...');
+		const user = await fetch(baseURL + '/api/user', {
+			credentials: 'include'
+		})
+		.then((res) => res.json())
+		.then((data) => {
+			if (data.error) {
+				throw new Error(data.error);
+			}
+			return data
+		})
+		.catch((error) => {
+			console.error(error);
+			return null;
+		});
 
-    function setUser(newUser: User | null) {
-        user.value = newUser === null ? null : {
-            username: newUser.username,
-            email: newUser.email,
-            role: newUser.role
-        };
+		return user;
+	}
 
-        localStorage.setItem('user', JSON.stringify(user.value));
-        return user;
-    }
-    const getUser = computed(() => user.value);
+	async function login(credentials: { email: string, password: string }) {
+		try {
+			const response = await fetch(baseURL + '/api/user/login', {
+				method: 'POST',
+				credentials: 'include',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(credentials),
+			}).then((res) => res.json());
+			const { user: newUser } = response;
 
-    async function readUser() {
-        const user = await fetch(baseURL + '/api/user'/* , {
-            headers: {
-                Authorization: `Bearer ${getToken.value}`
-            },
-        } */).then((res) => res.json());
+			if (!newUser) {
+				console.error('Login failed:', response);
+				return [false, response.error];
+			}
 
-        return user;
-    }
+			const user = await readUser();
+			if (user) {
+				setUser(user);
+			} else {
+				console.error('User not found after login');
+				return [false, "User not found after login"];
+			}
 
-    async function login(credentials: { email: string, password: string }) {
-        try {
-            const response = await fetch(baseURL + '/api/user/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credentials),
-            }).then((res) => res.json());
+			router.push('/profile');
+			return [true, null];
+		} catch (error) {
+			console.error('Login error:', error);
+			return [false, error];
+		}
+	}
 
-            /*if (response.token) {
-                setToken(response.token);
-                localStorage.setItem('token', response.token);
-            */
-           console.log('Login:', response);
-            if (response) {
-                setUser(await readUser());
+	function logout() {
+		setUser(null);
+		localStorage.removeItem('user');
 
-                router.push('/dashboard');
-                return true;
-            } else {
-                return false;
-            }
-        } catch (error) {
-            console.error('Login failed:', error);
-            return error;
-        }
-    }
+		if (getUser.value === null) {
+			router.push('/login');
+			return true;
+		}
 
-    function logout() {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+		return false;
+	}
 
-        if (getToken.value === null) {
-            router.push('/login');
-            return true;
-        }
-
-        return false
-    }
-
-    return {
-        setToken,
-        getToken,
-        setUser,
-        getUser,
-        login,
-        logout
-    };
+	return {
+		setUser,
+		getUser,
+		login,
+		logout
+	};
 });
 
 export default useAuthStore;

@@ -12,6 +12,7 @@ type FieldComponent = {
     type?: string;
     minLength?: number;
     required?: boolean;
+	defaultValue?: string;
 };
 
 type ButtonComponent = {
@@ -25,6 +26,7 @@ type ButtonComponent = {
 };
 
 interface User {
+	id: number; //TODO: UUID?
     username: string;
     email: string;
     role: string;
