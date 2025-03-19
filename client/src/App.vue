@@ -32,7 +32,7 @@
     import useAuthStore from './stores/auth-store';
     import ButtonComponent from './components/ButtonComponent.vue';
     const authStore = useAuthStore();
-    const isLoggedIn = computed(() => authStore.getToken !== null);
+    const isLoggedIn = computed(() => authStore.getUser() !== null);
     const onClickLogout = () => authStore.logout();
 </script>
 
