@@ -25,6 +25,15 @@ type ButtonComponent = {
     onClick?: (event: Event) => void;
 };
 
+interface CommentComponent {
+    username: string;
+    content: string;
+}
+
+interface UsernameComponent {
+	username: string;
+}
+
 interface User {
 	id: number; //TODO: UUID?
     username: string;
@@ -36,5 +45,7 @@ export type {
     FormComponent,
     FieldComponent,
     ButtonComponent,
-    User
+    User,
+	CommentComponent,
+	UsernameComponent
 }
