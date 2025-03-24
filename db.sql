@@ -4,9 +4,9 @@ USE `instaflop`;
 
 CREATE TABLE IF NOT EXISTS users (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `userId` VARCHAR(255) NOT NULL UNIQUE KEY DEFAULT (UUID()),
+    `username` VARCHAR(255) NOT NULL UNIQUE,
+	`displayname` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL UNIQUE,
-    `username` VARCHAR(255) NOT NULL,
     `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     `password` VARCHAR(255) NOT NULL,
     `profile_pic_url` VARCHAR(255) NOT NULL DEFAULT 'https://www.gravatar.com/avatar/',

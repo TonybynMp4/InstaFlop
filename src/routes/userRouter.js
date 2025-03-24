@@ -2,7 +2,7 @@ const router = require('express').Router();
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { email, password } = require('../middlewares/validators');
+const { email, password, username } = require('../middlewares/validators');
 const validationResult = require('../middlewares/validationResult');
 const auth = require('../middlewares/auth');
 
@@ -48,10 +48,10 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', email, password, validationResult, async (req, res) => {
-    const { username, email, password } = req.body;
+router.post('/register', username, email, password, validationResult, async (req, res) => {
+    const { username, displayname, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    if (!username || !displayname || !email || !password) {
         res.status(400).json({ errors: {msg: 'All fields are required'} });
         return;
     }
@@ -63,7 +63,7 @@ router.post('/register', email, password, validationResult, async (req, res) => 
             return;
         }
 
-        const newUser = await User.create(username, email, password);
+        const newUser = await User.create(username, displayname, email, password);
         res.status(201).json({ok: true, newUser});
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -141,12 +141,12 @@ router.delete('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
     const authUserId = req.auth.id;
-    const { id, username, email } = req.body;
+    const { id, username, displayname, email, password } = req.body;
 
     if (!id)
-        res.status(400).json({ error: 'User ID is required' });
-    else if (!username && !email) {
-        res.status(400).json({ error: 'At least one field is required' });
+        return res.status(400).json({ error: 'User ID is required' });
+    else if (!username && !displayname && !email && !password) {
+        return res.status(400).json({ error: 'At least one field is required' });
     }
 
     if (!authUserId) {

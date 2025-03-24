@@ -34,7 +34,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('SELECT id, username, email, password, role FROM users WHERE email = ?', [email], (err, rows) => {
+            db.execute('SELECT id, username, displayname, email, password, role FROM users WHERE email = ?', [email], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -43,22 +43,22 @@ class User {
         });
     }
 
-    static async create(username, email, password) {
-        if (!username || !email || !password) {
+    static async create(username, displayname, email, password) {
+        if (!username || !displayname || !email || !password) {
             throw new Error('All fields are required');
         }
 
         password = bcrypt.hashSync(password, 10);
 
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, password], (err, rows) => {
+            db.execute('INSERT INTO users (username, displayname, email, password) VALUES (?, ?, ?, ?)', [username, displayname, email, password], (err, rows) => {
                 if(err)
                     reject(err);
                 else {
                     if (rows.affectedRows === 0)
                         reject(new Error('user not created'));
                     else
-                        db.execute('SELECT id, username FROM users WHERE id = ?', [rows.insertId], (err, rows) => {
+                        db.execute('SELECT id, username, displayname FROM users WHERE id = ?', [rows.insertId], (err, rows) => {
                             if(err)
                                 reject(err);
                             else
@@ -70,12 +70,12 @@ class User {
     }
 
     // username, email and password are optional
-    static async update(id, { username, email, password }) {
+    static async update(id, { username, displayname, email, password }) {
         if (!id) {
             throw new Error('id is required');
         }
 
-        if (!username && !email && !password) {
+        if (!username && !displayname && !email && !password) {
             throw new Error('At least one field is required');
         }
 
@@ -87,6 +87,11 @@ class User {
             if (username) {
                 fields.push('username = ?');
                 values.push(username);
+            }
+
+            if (displayname) {
+                fields.push('displayname = ?');
+                values.push(displayname);
             }
 
             if (email) {
