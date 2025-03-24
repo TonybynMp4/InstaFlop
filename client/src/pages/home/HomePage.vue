@@ -1,32 +1,25 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import Comment from '@/components/post/CommentComponent.vue';
+import ProfilePictureComponent from '@/components/profile/ProfilePictureComponent.vue';
+import UsernameComponent from '@/components/profile/UsernameComponent.vue';
+import { DotIcon, EllipsisVertical } from 'lucide-vue-next';
+	import { ref } from 'vue';
 
     const posts = ref([
         {
             content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
-            image: '/images/kyoto.jpg',
-        },
-        {
-            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
-            image: '/images/newyork.jpg',
-        },
-        {
-            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
-            image: '/images/logo.png',
-        },
-        {
-            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
-            image: '/images/logo.png',
-        },
-        {
-            content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem vitae libero earum quis, aliquam ut cupiditate delectus est iusto quasi eum perspiciatis aspernatur, velit vel amet voluptatem voluptas voluptatum repellat?',
-            image: '/images/logo.png',
-        },
+            image: '/images/1.jpg',
+			comments: [
+				{ id: 1, username: 'JohnDoe', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.' },
+				{ id: 2, username: 'JaneDoe', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.' },
+			],
+			username: 'JohnDoe',
+		},
     ]);
 </script>
 
 <template>
-    <main>
+    <main class="flex flex-col gap-4 items-center">
         <section id="feed">
             <h2>Suivis</h2>
             <div id="post-form">
@@ -39,20 +32,22 @@
                     <p>{{ post.content }}</p>
                 </div>
                 <div class="post_aside">
+					<div class="post_user">
+						<div class="post_user_info">
+							<ProfilePictureComponent :src="post.image" />
+							<UsernameComponent :username="post.username" />
+						</div>
+						<EllipsisVertical />
+					</div>
+					<p>Commentaires</p>
                     <div class="post_comment_section">
-                        <article class="post_comment">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
-                        </article>
-                        <article class="post_comment">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
-                        </article>
-                        <article class="post_comment">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
-                        </article>
-                        <article class="post_comment">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.</p>
-                        </article>
+                        <Comment v-for="comment in post.comments" :username="comment.username" :content="comment.content" :key="comment.id" />
                     </div>
+					<div class="post_comment_form">
+						<textarea name="comment" id="comment" cols="30" rows="1" placeholder="Laisse un commentaire.."></textarea>
+						<button @click="addComment(post)">Commenter</button>
+					</div>
+
                 </div>
             </article>
         </section>
@@ -69,6 +64,20 @@
         gap: 1rem;
         align-items: center;
     }
+
+	.post_user {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		width: 100%;
+	}
+
+	.post_user_info {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		width: 100%;
+	}
 
     #feed {
         display: flex;
@@ -122,18 +131,6 @@
         flex-direction: column;
         gap: 1rem;
         font-size: smaller;
-    }
-
-    .post_comment {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        width: 100%;
-        border: 1px solid #fff;
-        padding-block: 0.5rem;
-        padding-inline: 0.5rem;
-        background-color: #3f3f3f;
-        border-radius: 1rem;
     }
 
     p {

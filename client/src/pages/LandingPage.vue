@@ -44,5 +44,6 @@
         flex-direction: column;
         gap: 1rem;
         align-items: center;
+		min-height: 80vh;
     }
 </style>
