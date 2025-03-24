@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', username, email, password, validationResult, async (req, res) => {
+router.post('/', username, email, password, validationResult, async (req, res) => {
     const { username, displayname, email, password } = req.body;
 
     if (!username || !displayname || !email || !password) {
@@ -65,22 +65,6 @@ router.post('/register', username, email, password, validationResult, async (req
 
         const newUser = await User.create(username, displayname, email, password);
         res.status(201).json({ok: true, newUser});
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-router.post('/', async (req, res) => {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-        res.status(400).json({ error: 'All fields are required' });
-        return;
-    }
-
-    try {
-        const user = await User.create(req.body);
-        res.status(201).json(user);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
