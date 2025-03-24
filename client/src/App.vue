@@ -1,11 +1,11 @@
 <template>
     <header>
         <h1>
-            InstaFlop
+			<router-link to="/" class="header__title">InstaFlop</router-link>
         </h1>
         <ul>
             <li>
-                <router-link class="button" to="/">Home</router-link>
+                <router-link class="button" to="/">Landing</router-link>
             </li>
             <li v-if="!isLoggedIn">
                 <router-link class="button" to="/register">Register</router-link>
@@ -14,7 +14,7 @@
                 <router-link class="button" to="/login">Login</router-link>
             </li>
             <li v-if="isLoggedIn">
-                <router-link class="button" to="/dashboard">Dashboard</router-link>
+                <router-link class="button" to="/home">Home</router-link>
             </li>
             <li v-if="isLoggedIn">
                 <ButtonComponent :id="'logout'" :label="'Logout'" @click="onClickLogout" />
@@ -32,7 +32,7 @@
     import useAuthStore from './stores/auth-store';
     import ButtonComponent from './components/ButtonComponent.vue';
     const authStore = useAuthStore();
-    const isLoggedIn = computed(() => authStore.getUser() !== null);
+    const isLoggedIn = computed(() => authStore.getUser !== null);
     const onClickLogout = () => authStore.logout();
 </script>
 
@@ -47,6 +47,13 @@
         align-items: center;
     }
 
+	.header__title {
+		text-decoration: none;
+		color: inherit;
+		font-size: 2rem;
+		font-weight: bold;
+	}
+
     header ul {
         display: flex;
         gap: 1rem;
@@ -56,4 +63,14 @@
     header ul li {
         list-style: none;
     }
+
+	footer {
+		background-color: #f1f1f1;
+		color: #333;
+		width: 100%;
+		display: flex;
+		padding: 1rem;
+		justify-content: center;
+		align-items: center;
+	}
 </style>
