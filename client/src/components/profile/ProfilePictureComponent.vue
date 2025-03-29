@@ -2,14 +2,18 @@
 	import { defineProps } from 'vue';
 	interface ProfilePictureComponent {
 		src: string;
+		fallback?: string;
 	}
 
 	const props = defineProps<ProfilePictureComponent>();
-	const { src } = props;
+	const { src, fallback } = props;
 </script>
 
 <template>
-	<img class="profile_picture" :src="src" alt="Profile Picture" />
+	<img v-if="src" class="profile_picture" :src="src" alt="Profile Picture" />
+	<div v-else class="profile_picture">
+		{{ fallback ? fallback.slice(0, 1).toUpperCase() : '?' }}
+	</div>
 </template>
 
 <style scoped>
@@ -18,6 +22,8 @@
 		height: 48px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 1px solid #ffffff;
+		border: 1px solid #e4e4e7;
+		align-content: center;
+		text-align: center;
 	}
 </style>

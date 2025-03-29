@@ -35,10 +35,11 @@ interface UsernameComponent {
 }
 
 interface User {
-	id: number; //TODO: UUID?
+	id: number;
     username: string;
     email: string;
     role: string;
+	profilePicture: string;
 }
 
 export type {

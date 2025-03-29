@@ -13,7 +13,8 @@ const useAuthStore = defineStore('auth', () => {
 			id: newUser.id,
 			username: newUser.username,
 			email: newUser.email,
-			role: newUser.role
+			role: newUser.role,
+			profilePicture: newUser.profilePicture
 		};
 
 		localStorage.setItem('user', JSON.stringify(user.value));
