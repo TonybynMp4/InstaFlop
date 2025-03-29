@@ -125,11 +125,11 @@ router.delete('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
     const authUserId = req.auth.id;
-    const { id, username, displayname, email, password } = req.body;
+    const { id, username, displayname, email, password, profile_picture } = req.body;
 
     if (!id)
         return res.status(400).json({ error: 'User ID is required' });
-    else if (!username && !displayname && !email && !password) {
+    else if (!username && !displayname && !email && !password && !profile_picture) {
         return res.status(400).json({ error: 'At least one field is required' });
     }
 
