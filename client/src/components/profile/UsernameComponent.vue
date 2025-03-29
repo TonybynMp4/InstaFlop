@@ -7,9 +7,7 @@
 </script>
 
 <template>
-	<router-link :to="`/profile/${username}`" class="username">
-		@{{ username }}
-	</router-link>
+	<router-link :to="`/profile/${username}`" class="username">@{{ username }}</router-link>
 </template>
 
 <style scoped>
