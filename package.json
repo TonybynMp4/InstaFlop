@@ -8,7 +8,7 @@
     "server": "nodemon server.js",
     "client": "npm run dev --prefix ./client",
     "build:client": "npm run build --prefix ./client",
-	"i": "rm -rf node_modules && rm package-lock.json && npm install && npm run build:client"
+	"i": "rm -rf node_modules package-lock.json && npm install"
   },
   "keywords": [],
   "author": "",
