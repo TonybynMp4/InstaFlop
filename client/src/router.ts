@@ -30,6 +30,10 @@ const router = createRouter({
             path: '/profile/:id',
             component: () => import('@/pages/profile/ProfilePage.vue'),
         },
+		{
+			path: '/post/:id',
+			component: () => import('@/pages/post/PostPage.vue'),
+		},
         {
             path: '/:pathMatch(.*)',
             component: () => import('@/pages/NotFoundPage.vue')
