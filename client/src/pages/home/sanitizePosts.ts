@@ -2,6 +2,8 @@ import type { serverPost } from "@/types/apiResponses";
 import type { PostComponentProps } from "@/types/components";
 
 export default function sanitizePosts(posts: serverPost[]) : PostComponentProps[] {
+	console.log(posts[0]);
+
 	return posts.map((post) => ({
 		id: post.id,
 		content: post.description,

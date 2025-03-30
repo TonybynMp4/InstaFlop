@@ -25,12 +25,19 @@
 			console.error('Error fetching posts:', error);
 		});
 	});
+
+	const addPost = (post: serverPost) => {
+		console.log('Post published:', post);
+		if (!post) return;
+		posts.unshift(sanitizePosts([post])[0]);
+	};
+
 </script>
 
 <template>
 	<main class="flex flex-col gap-4 items-center">
 		<section id="feed">
-			<PostComposer />
+			<PostComposer @postPublished="addPost" />
 			<PostComponent v-for="post in posts" :key="post.id" :post="post"/>
 		</section>
 	</main>

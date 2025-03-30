@@ -7,10 +7,16 @@
 	import { XIcon } from 'lucide-vue-next';
 	const authStore = useAuthStore();
 
-	let mediaUrls = ref<string[]>([]);
+	const mediaUrls = ref<string[]>([]);
+	const isUploading = ref(false);
+
+	const emit = defineEmits(['postPublished']);
 
 	const publishPost = (data: Event) => {
 		if (!authStore.getUser) return;
+		if (isUploading.value) {
+			return;
+		}
 		const requestBody = JSON.stringify({
 			content: (data.target as HTMLFormElement).post.value,
 			mediaUrls: mediaUrls.value,
@@ -29,9 +35,9 @@
 			if (!response.ok) throw new Error('Network response was not ok');
 			return response.json();
 		})
-		.then(data => {
-			console.log('Post published:', data);
-			alert('Post published successfully!');
+		.then(post => {
+			alert('Post publié avec succès !');
+			emit('postPublished', post);
 		})
 		.catch(error => {
 			console.error('Error publishing post:', error);
@@ -67,9 +73,12 @@
 			},
 			endpoint: 'videoAndImage',
 			onClientUploadComplete: (files) => {
-				console.log('uploaded', files);
 				files.forEach(file => mediaUrls.push(file.ufsUrl));
-				alert('Upload complete');
+				isUploading = false;
+			},
+			onBeforeUploadBegin: (file) => {
+				isUploading = true;
+				return file
 			},
 			onUploadAborted: () => {
 				alert('Upload Aborted');
@@ -81,7 +90,7 @@
 		}" />
 		<div class="flex gap-2 ml-auto">
 			<button type="reset" @click="mediaUrls = []" class="bg-red-500 h-10 text-white rounded-md px-4 py-2">Reinitialiser</button>
-			<button class="h-10">Publier</button>
+			<button class="h-10" :disabled="isUploading">Publier</button>
 		</div>
 	</form>
 </template>

@@ -69,17 +69,23 @@ class Post {
 
     static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
-            db.execute('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
+			const query = `SELECT post.*, user.id, user.displayname, user.profile_picture
+				FROM posts AS post
+				LEFT JOIN users AS user
+				ON post.user_id = user.id WHERE post.id = ?
+			`;
+
+            db.execute(query, [id], async (err, rows) => {
                 if (err)
                     reject(err);
                 else
                     try {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
-                        if (withMedia) post.media = getMedias(post.id);
-                        if (withComments) post.comments = getComments(post.id);
-                        if (withLikes) post.likes = getLikes(post.id);
-						if (withLiked && authUserId) post.liked = getLiked(post.id, authUserId);
+                        if (withMedia) post.media = await getMedias(post.id);
+                        if (withComments) post.comments = await getComments(post.id);
+                        if (withLikes) post.likes = await getLikes(post.id);
+						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
 
                         resolve(post);
                     } catch (error) {
@@ -100,16 +106,15 @@ class Post {
                     else {
 						if (mediaUrls && mediaUrls.length > 0) {
 							const medias = await PostMedia.create({ mediaUrls, user_id, postId: rows.insertId });
-							if (medias) {
-								const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
-								resolve(post);
-							} else {
+							if (!medias) {
 								await this.delete(rows.insertId);
 								reject(new Error('post medias not created'));
 							}
-						} else {
-							resolve(rows.insertId);
 						}
+
+						const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
+						console.log('post created', post);
+						resolve(post);
 					}
                 }
             });

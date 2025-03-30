@@ -14,15 +14,12 @@ async function getMedias(postId) {
 
 async function getLikes(postId) {
 	return new Promise((resolve, reject) => {
-		const query = `
-			SELECT COUNT(*) AS likes FROM likes WHERE post_id = ?
-		`;
-
-		db.execute(query, [postId], (err, data) => {
+		db.execute('SELECT COUNT(*) AS likes FROM likes WHERE post_id = ?', [postId], (err, data) => {
 			if (err) {
 				reject(err);
 			} else {
-				resolve(data[0].likes);
+				console.log(data[0], data[0].likes, data[0].likes || 0);
+				resolve(data[0].likes || 0);
 			}
 		});
 	});
