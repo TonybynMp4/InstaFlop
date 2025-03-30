@@ -44,14 +44,14 @@
 <template>
 	<article class="post">
 		<div class="post_main">
-			<div class="post_image">
+			<div style="position: relative;" v-if="props.post.image">
 				<img class="post_image" :src="props.post.image" alt="image" />
 				<Heart class="heartBurst toggleHeartBurst" v-if="playLikeAnimation" />
 			</div>
 			<div class="post_details">
 				<div class="post_details_upper">
 					<div class="post_user">
-						<ProfilePicture :src="props.post.image" />
+						<ProfilePicture :src="props.post.profilePicture" :fallback="props.post.username" />
 						<Username :username="props.post.username" />
 					</div>
 					<div class="post_actions">
@@ -68,6 +68,16 @@
 </template>
 
 <style scoped>
+	.post {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+		border: 1px solid #a5a5a5;
+		border-radius: 1rem;
+		width: 100%;
+		max-height: 50rem;
+	}
+
 	.post_user {
 		display: flex;
 		gap: 1rem;
@@ -90,27 +100,28 @@
 		flex-direction: column;
 	}
 
-	.post {
-		display: flex;
-		gap: 1rem;
-		align-items: flex-start;
-		border: 1px solid #e4e4e7;
-		border-radius: 1rem;
-	}
-
 	.post_main {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
 		justify-items: flex-start;
-		width: 100%;
+		width: 70%;
+	}
+
+	.post_aside {
+		width: 30%;
 	}
 
 	.post_image {
+		background-color: black;
 		width: 100%;
+		align-self: center;
+		height: fit-content;
+		max-height: 40rem;
 		height: auto;
 		border-radius: 1rem 0 0 0;
 		position: relative;
+		object-fit: contain;
 	}
 
 	.post_details {
