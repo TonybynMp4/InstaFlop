@@ -25,11 +25,6 @@ type ButtonComponent = {
     onClick?: (event: Event) => void;
 };
 
-interface CommentComponent {
-    username: string;
-    content: string;
-}
-
 interface UsernameComponent {
 	username: string;
 }
@@ -42,11 +37,35 @@ interface User {
 	profilePicture: string;
 }
 
+interface PostComponent {
+	id: number;
+	content: string;
+	image: string;
+	liked: boolean;
+	username: string;
+	likes: number;
+	createdAt: string;
+	comments: Comment[];
+}
+
+interface Comment {
+	id: number;
+	username: string;
+	content: string;
+	createdAt: string;
+}
+
+type CommentComponent = {
+	comment: Comment;
+}
+
 export type {
     FormComponent,
     FieldComponent,
     ButtonComponent,
     User,
 	CommentComponent,
-	UsernameComponent
+	UsernameComponent,
+	PostComponent,
+	Comment
 }
