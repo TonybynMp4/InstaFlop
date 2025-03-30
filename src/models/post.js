@@ -1,8 +1,8 @@
 const db = require('./db')
 
-async function getRelatedData(table, foreignKey, id) {
+async function getRelatedData(table, id) {
     return new Promise((resolve, reject) => {
-        db.execute(`SELECT * from ${table} WHERE ${foreignKey} = ?`, [id], (err, data) => {
+        db.execute(`SELECT *, created_at AS createdAt FROM ${table} WHERE post_id = ?`, [id], (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -10,6 +10,27 @@ async function getRelatedData(table, foreignKey, id) {
             }
         });
     });
+}
+
+async function getComments(postId) {
+	return new Promise((resolve, reject) => {
+		const query = `
+			SELECT post.*, user.displayname, user.profile_picture
+			FROM comments AS post
+			LEFT JOIN users AS user
+			ON post.user_id = user.id
+			WHERE post.post_id = ?
+			ORDER BY post.created_at DESC
+		`;
+
+		db.execute(query, [postId], (err, data) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(data);
+			}
+		});
+	});
 }
 
 class Post {
@@ -22,9 +43,9 @@ class Post {
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getRelatedData('post_medias', 'post_id', row.id);
-                        if (withComments) row.comments = await getRelatedData('comments', 'post_id', row.id);
-                        if (withLikes) row.likes = await getRelatedData('likes', 'post_id', row.id);
+                        if (withMedia) row.media = await getRelatedData('post_medias', row.id);
+                        if (withLikes) row.likes = await getRelatedData('likes', row.id);
+                        if (withComments) row.comments = await getComments(row.id);
                     }
 
                     resolve(rows);
@@ -35,6 +56,44 @@ class Post {
         });
     }
 
+	static async getFeed({ withMedia = false, withComments = false, withLikes = false, authUserId }) {
+		if (!authUserId) {
+			throw new Error('authUserId is required');
+		}
+
+		const query = `
+			SELECT post.*, user.displayname, user.profile_picture
+			FROM posts AS post
+			LEFT JOIN users AS user
+			ON post.user_id = user.id
+			WHERE post.user_id IN (
+				SELECT following_id FROM followers WHERE follower_id = ?
+			)
+			OR post.user_id = ?
+			ORDER BY post.created_at DESC
+		`;
+
+		return new Promise((resolve, reject) => {
+			db.query(query, [authUserId, authUserId], async (err, rows) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                try {
+                    for (let row of rows) {
+                        if (withMedia) row.media = await getRelatedData('post_medias', row.id);
+                        if (withLikes) row.likes = await getRelatedData('likes', row.id);
+                        if (withComments) row.comments = await getComments(row.id);
+                    }
+
+                    resolve(rows);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+		});
+	}
+
     static async getById(id, { withMedia = false, withComments = false, withLikes = false }) {
         return new Promise((resolve, reject) => {
             db.execute('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
@@ -44,9 +103,9 @@ class Post {
                     try {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
-                        if (withMedia) post.media = getRelatedData('post_medias', 'post_id', post.id);
-                        if (withComments) post.comments = getRelatedData('comments', 'post_id', post.id);
-                        if (withLikes) post.likes = getRelatedData('likes', 'post_id', post.id);
+                        if (withMedia) post.media = getRelatedData('post_medias', post.id);
+                        if (withComments) post.comments = getRelatedData('comments', post.id);
+                        if (withLikes) post.likes = getRelatedData('likes', post.id);
 
                         resolve(post);
                     } catch (error) {
