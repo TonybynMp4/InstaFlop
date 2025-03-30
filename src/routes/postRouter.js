@@ -26,20 +26,25 @@ router.get('/getPost/:id', async (req, res) => {
     }
 });
 
-
 router.use(auth);
 // protected API (only authenticated users can access)
 
 router.post('/', async (req, res) => {
-    const { user_id } = req.body;
+    const { content, mediaUrls } = req.body;
 
-    if (!user_id) {
-        res.status(400).json({ error: 'Title and user id are required!' });
-        return;
-    }
+	if (!content && !mediaUrls) {
+		res.status(400).json({ error: 'Content or mediaUrls is required' });
+		return;
+	}
+
+    const { id: user_id } = req.auth;
+	if (!user_id) {
+		res.status(401).json({ error: 'Unauthorized' });
+		return;
+	}
 
     try {
-        const post = await Post.create(req.body);
+        const post = await Post.create({ content, mediaUrls, user_id });
         res.status(201).json(post);
     } catch (err) {
         res.status(500).json({ error: err.message });
