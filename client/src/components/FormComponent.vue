@@ -36,7 +36,6 @@ section {
 }
 
 form {
-    font-family: monospace;
     width: 50%;
 }
 
