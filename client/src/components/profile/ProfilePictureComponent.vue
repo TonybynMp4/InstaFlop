@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import { defineProps } from 'vue';
 	interface ProfilePictureComponent {
-		src: string;
-		fallback?: string;
+		src?: string;
+		fallback: string;
 	}
 
 	const props = defineProps<ProfilePictureComponent>();
