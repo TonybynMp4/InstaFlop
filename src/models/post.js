@@ -1,4 +1,5 @@
 const db = require('./db');
+const PostMedia = require('./postMedia');
 const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
 
 class Post {
@@ -88,21 +89,28 @@ class Post {
         });
     }
 
-    static async create({ title, description, user_id }) {
+    static async create({ content, mediaUrls, user_id }) {
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)', [title, description, user_id], (err, rows) => {
+            db.execute('INSERT INTO posts (user_id, description) VALUES (?, ?)', [user_id, content], async (err, rows) => {
                 if (err)
                     reject(err);
                 else {
                     if (rows.affectedRows === 0)
                         reject(new Error('post not created'));
-                    else
-                        db.execute('SELECT * FROM posts WHERE id = ?', [rows.insertId], (err, rows) => {
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(rows[0]);
-                        });
+                    else {
+						if (mediaUrls && mediaUrls.length > 0) {
+							const medias = await PostMedia.create({ mediaUrls, user_id, postId: rows.insertId });
+							if (medias) {
+								const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
+								resolve(post);
+							} else {
+								await this.delete(rows.insertId);
+								reject(new Error('post medias not created'));
+							}
+						} else {
+							resolve(rows.insertId);
+						}
+					}
                 }
             });
         });
