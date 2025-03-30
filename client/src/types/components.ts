@@ -37,6 +37,7 @@ interface PostComponentProps {
 	image: string;
 	liked: boolean;
 	username: string;
+	profilePicture: string;
 	likes: number;
 	createdAt: string;
 	comments: Comment[];
@@ -46,11 +47,17 @@ type CommentComponentProps = {
 	comment: Comment;
 }
 
+interface ProfilePictureComponent {
+	src?: string;
+	fallback?: string;
+}
+
 export type {
 	FormComponentProps,
 	FieldComponentProps,
 	ButtonComponentProps,
 	CommentComponentProps,
 	UsernameComponentProps,
-	PostComponentProps
+	PostComponentProps,
+	ProfilePictureComponent
 }
