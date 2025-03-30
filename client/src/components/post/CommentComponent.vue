@@ -2,9 +2,10 @@
 	import { defineProps } from 'vue';
 	import type { CommentComponent } from '@/types';
 	import Username from '@/components/profile/UsernameComponent.vue';
+	import ProfilePicture from '../profile/ProfilePictureComponent.vue';
 
 	const props = defineProps<CommentComponent>();
-	const { username, content, createdAt } = props.comment;
+	const { username, profilePicture, content, createdAt } = props.comment;
 
 	const date = new Date(createdAt);
 	const dateDiff = date.getTime() - Date.now();
@@ -45,30 +46,44 @@
 
 <template>
 	<article class="post_comment">
-		<p>
+		<span class="post_comment_user">
+			<ProfilePicture :src="profilePicture" :fallback="username" />
 			<Username :username="username" />
+			<time class="post_comment_time" datetime={createdAt}>{{
+				timeAgo
+			}}</time>
+		</span>
+		<p>
 			{{ content }}
 		</p>
-		<time class="post_comment_time" datetime={createdAt}>{{
-			timeAgo
-		}}</time>
 	</article>
 </template>
 
 <style scoped>
 	.post_comment {
-        display: flex;
+		display: flex;
 		flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-        border-bottom: 1px solid #bbb;
-        padding-block: 0.5rem;
-        padding-inline: 0.5rem;
+		width: 100%;
+		border-bottom: 1px solid #bbb;
+		padding-block: 0.5rem;
+		padding-inline: 0.5rem;
 		border-radius: 0;
-    }
+	}
 
 	.post_comment p {
-		margin: 0;
+		font-size: small;
+		margin-left: 4ch;
 		overflow: hidden;
+	}
+
+	.post_comment_user {
+		display: flex;
+		gap: 1ch;
+		align-items: center;
+	}
+
+	.post_comment_time {
+		font-size: smaller;
+		color: #888;
 	}
 </style>

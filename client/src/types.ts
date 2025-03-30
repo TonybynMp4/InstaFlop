@@ -51,6 +51,7 @@ interface PostComponent {
 interface Comment {
 	id: number;
 	username: string;
+	profilePicture: string;
 	content: string;
 	createdAt: string;
 }
