@@ -10,6 +10,7 @@
     "i": "rm -rf node_modules package-lock.json && npm i"
   },
   "dependencies": {
+    "@uploadthing/vue": "^7.3.0",
     "client": "file:",
     "lucide-vue-next": "^0.483.0",
     "pinia": "^3.0.1",
