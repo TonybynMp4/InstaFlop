@@ -2,11 +2,49 @@
 	import { UploadButton } from '@/uploadthing';
 	import ProfilePictureComponent from '../profile/ProfilePictureComponent.vue';
 	import useAuthStore from '@/stores/auth-store';
+	import { ref } from 'vue';
+	import baseURL from '@/baseUrl';
+	import { XIcon } from 'lucide-vue-next';
 	const authStore = useAuthStore();
 
-	const publishPost = () => {
+	let mediaUrls = ref<string[]>([]);
+
+	const publishPost = (data: Event) => {
 		if (!authStore.getUser) return;
+		const requestBody = JSON.stringify({
+			content: (data.target as HTMLFormElement).post.value,
+			mediaUrls: mediaUrls.value,
+		});
+
+
+		fetch(baseURL + '/api/post', {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: requestBody,
+		})
+		.then(response => {
+			if (!response.ok) throw new Error('Network response was not ok');
+			return response.json();
+		})
+		.then(data => {
+			console.log('Post published:', data);
+			alert('Post published successfully!');
+		})
+		.catch(error => {
+			console.error('Error publishing post:', error);
+			alert('Error publishing post. Please try again later.');
+		});
+		mediaUrls.value = []; // Clear media URLs after publishing
+
+		(data.target as HTMLFormElement).reset(); // Reset the form
 	};
+
+	function alert(message: string) {
+		window.alert(message);
+	}
 </script>
 
 <template>
@@ -15,25 +53,36 @@
 			<ProfilePictureComponent :src="authStore.getUser?.profilePicture" :fallback="authStore.getUser?.username" />
 			<textarea name="post" id="post" cols="30" rows="3" placeholder="What's on your mind?"></textarea>
 		</div>
+		<div class="post-composer__media-preview">
+			<div v-for="url in mediaUrls" class="relative">
+				<img :src="url" :key="url" alt="Uploaded media"
+					style="max-width: 100px; max-height: 100px;" />
+				<XIcon @click="mediaUrls = mediaUrls.filter(mediaUrl => mediaUrl !== url)"
+					style="cursor: pointer; color: red; height: 100%; width: 100%;" class="absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2" />
+			</div>
+		</div>
 		<UploadButton :config="{
-				config: {
-					mode: 'manual',
-					appendOnPaste: true,
-				},
-				endpoint: 'videoAndImage',
-				onClientUploadComplete: (file) => {
-					console.log('uploaded', file);
-					alert('Upload complete');
-				},
-				onUploadAborted: () => {
-					alert('Upload Aborted');
-				},
-				onUploadError: (error) => {
-					console.error(error, error.cause);
-					alert('Upload failed');
-				},
-			}" />
-		<button>Publier</button>
+			headers: {
+				credentials: 'include',
+			},
+			endpoint: 'videoAndImage',
+			onClientUploadComplete: (files) => {
+				console.log('uploaded', files);
+				files.forEach(file => mediaUrls.push(file.ufsUrl));
+				alert('Upload complete');
+			},
+			onUploadAborted: () => {
+				alert('Upload Aborted');
+			},
+			onUploadError: (error) => {
+				console.error(error, error.cause);
+				alert('Upload failed');
+			},
+		}" />
+		<div class="flex gap-2 ml-auto">
+			<button type="reset" @click="mediaUrls = []" class="bg-red-500 h-10 text-white rounded-md px-4 py-2">Reinitialiser</button>
+			<button class="h-10">Publier</button>
+		</div>
 	</form>
 </template>
 
@@ -64,5 +113,12 @@
 	padding: 0.5rem;
 	border-radius: 1rem;
 	background-color: #f0f0f0;
+}
+
+.post-composer__media-preview {
+	display: flex;
+	gap: 1rem;
+	width: 100%;
+	overflow-x: auto;
 }
 </style>
