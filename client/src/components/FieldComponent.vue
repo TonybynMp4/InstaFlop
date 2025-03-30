@@ -19,6 +19,22 @@
 <style>
     input:user-invalid {
         border: 2px inset red;
-        border-radius: 2px;
+        border-radius: 0.5rem;
     }
+
+	input {
+		background-color: #f5f5f5;
+		color: #333;
+		border: 1px solid #ccc;
+		border-radius: 0.5rem;
+		padding: 0.5rem;
+		width: 100%;
+		font-size: smaller;
+	}
+
+	label {
+		font-size: medium;
+		color: #333;
+		display: block;
+	}
 </style>

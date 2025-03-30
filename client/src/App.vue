@@ -49,7 +49,7 @@
         padding: 1rem;
         justify-content: space-between;
         align-items: center;
-		border-bottom: 1px solid #e4e4e7;
+		border-bottom: 1px solid #a5a5a5;
     }
 
 	.header__title {
@@ -78,6 +78,6 @@
 		padding: 1rem;
 		justify-content: center;
 		align-items: center;
-		border-top: 1px solid #e4e4e7;
+		border-top: 1px solid #a5a5a5;
 	}
 </style>

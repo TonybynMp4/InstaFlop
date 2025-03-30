@@ -29,23 +29,21 @@ const handleFieldChange = (payload: { id: string, val: string }) => {
 </template>
 
 <style scoped>
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
 form {
-    width: 50%;
+    width: 80%;
 }
 
 fieldset {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+	border-radius: 1rem;
+	padding: 2rem;
+	border: 1px solid #a5a5a5;
 }
 
 .actions {
+	display: flex;
     flex-direction: row;
     gap: 1rem;
 }
