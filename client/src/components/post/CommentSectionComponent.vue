@@ -25,9 +25,11 @@
 
 <template>
 	<div class="post_aside">
-		<p>Commentaires</p>
-		<div class="post_comment_section">
-			<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.id" />
+		<div>
+			<p>Commentaires</p>
+			<div class="post_comment_section">
+				<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.id" />
+			</div>
 		</div>
 		<form v-on:submit="onSubmit" class="post_comment_form">
 			<textarea name="comment" id="comment" cols="30" rows="1" placeholder="Laisser un commentaire.."></textarea>
@@ -39,10 +41,12 @@
 <style scoped>
 	.post_aside {
 		display: flex;
+		justify-content: space-between;
 		flex-direction: column;
 		gap: 1rem;
 		width: 70%;
 		padding: 1rem;
+		height: 100%;
 	}
 
 	.post_comment_section {
@@ -65,5 +69,12 @@
 	.post_comment_form textarea {
 		resize:vertical;
 		max-height: 7.5rem;
+	}
+
+	@media (max-width: 1024px) {
+		.post_comment_form {
+			flex-direction: column;
+			gap: 0.5rem;
+		}
 	}
 </style>

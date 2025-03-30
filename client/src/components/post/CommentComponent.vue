@@ -10,7 +10,7 @@
 	const date = new Date(createdAt);
 	const dateDiff = date.getTime() - Date.now();
 	if (isNaN(dateDiff)) {
-		throw new Error("Date invalide");
+		throw new Error("Date invalide: " + createdAt);
 	} else if (dateDiff > 0) {
 		throw new Error("Tu viens du futur mon reuf?");
 	}
@@ -64,7 +64,7 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		border-bottom: 1px solid #bbb;
+		border-bottom: 1px solid #a5a5a5;
 		padding-block: 0.5rem;
 		padding-inline: 0.5rem;
 		border-radius: 0;
