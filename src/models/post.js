@@ -1,37 +1,5 @@
-const db = require('./db')
-
-async function getRelatedData(table, id) {
-    return new Promise((resolve, reject) => {
-        db.execute(`SELECT *, created_at AS createdAt FROM ${table} WHERE post_id = ?`, [id], (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
-
-async function getComments(postId) {
-	return new Promise((resolve, reject) => {
-		const query = `
-			SELECT post.*, user.displayname, user.profile_picture
-			FROM comments AS post
-			LEFT JOIN users AS user
-			ON post.user_id = user.id
-			WHERE post.post_id = ?
-			ORDER BY post.created_at DESC
-		`;
-
-		db.execute(query, [postId], (err, data) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(data);
-			}
-		});
-	});
-}
+const db = require('./db');
+const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
 
 class Post {
     static async getAll({ withMedia = false, withComments = false, withLikes = false }) {
@@ -43,8 +11,8 @@ class Post {
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getRelatedData('post_medias', row.id);
-                        if (withLikes) row.likes = await getRelatedData('likes', row.id);
+                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withLikes) row.likes = await getLikes(row.id);
                         if (withComments) row.comments = await getComments(row.id);
                     }
 
@@ -56,7 +24,7 @@ class Post {
         });
     }
 
-	static async getFeed({ withMedia = false, withComments = false, withLikes = false, authUserId }) {
+	static async getFeed({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId }) {
 		if (!authUserId) {
 			throw new Error('authUserId is required');
 		}
@@ -81,9 +49,13 @@ class Post {
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getRelatedData('post_medias', row.id);
-                        if (withLikes) row.likes = await getRelatedData('likes', row.id);
+                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withLikes) row.likes = await getLikes(row.id);
                         if (withComments) row.comments = await getComments(row.id);
+						if (withLiked) {
+							row.liked = await getLiked(row.id, authUserId);
+						}
+
                     }
 
                     resolve(rows);
@@ -94,7 +66,7 @@ class Post {
 		});
 	}
 
-    static async getById(id, { withMedia = false, withComments = false, withLikes = false }) {
+    static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
             db.execute('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
                 if (err)
@@ -103,9 +75,10 @@ class Post {
                     try {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
-                        if (withMedia) post.media = getRelatedData('post_medias', post.id);
-                        if (withComments) post.comments = getRelatedData('comments', post.id);
-                        if (withLikes) post.likes = getRelatedData('likes', post.id);
+                        if (withMedia) post.media = getMedias(post.id);
+                        if (withComments) post.comments = getComments(post.id);
+                        if (withLikes) post.likes = getLikes(post.id);
+						if (withLiked && authUserId) post.liked = getLiked(post.id, authUserId);
 
                         resolve(post);
                     } catch (error) {
