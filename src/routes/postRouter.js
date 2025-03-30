@@ -47,9 +47,10 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/getFeed', async (req, res) => {
-	const authUserId = req.auth.id;
-    try {
-        const posts = await Post.getFeed({ withMedia: true, withComments: true, withLikes: true, authUserId });
+	const authUser = req.auth;
+
+	try {
+        const posts = await Post.getFeed({ withMedia: true, withComments: true, withLikes: true, authUserId: authUser.id });
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({ error: err.message });
