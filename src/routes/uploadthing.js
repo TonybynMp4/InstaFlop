@@ -6,14 +6,13 @@ const uploadRouter = {
 	videoAndImage: f({
 		image: {
 			maxFileSize: "4MB",
-			maxFileCount: 4,
+			maxFileCount: 10,
 		},
 		video: {
-			maxFileCount: 2,
+			maxFileCount: 5,
 		}
-	}).onUploadComplete((data) => {
-		console.log("upload completed", data);
-	}),
+	})
+	.onUploadComplete((data) => console.log("Upload complete", data))
 };
 
 module.exports = { uploadRouter };
