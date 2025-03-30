@@ -1,9 +1,6 @@
 <script setup lang="ts">
+	import type { ProfilePictureComponent } from '@/types/components';
 	import { defineProps } from 'vue';
-	interface ProfilePictureComponent {
-		src?: string;
-		fallback: string;
-	}
 
 	const props = defineProps<ProfilePictureComponent>();
 	const { src, fallback } = props;
@@ -22,7 +19,7 @@
 		height: 48px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 1px solid #e4e4e7;
+		border: 1px solid #a5a5a5;
 		align-content: center;
 		text-align: center;
 	}
