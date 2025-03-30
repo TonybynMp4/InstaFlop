@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { defineProps } from 'vue';
-	import type { Comment } from '@/types';
+	import type { Comment } from '@/types/types';
 	import CommentComponent from './CommentComponent.vue';
 
 	const props = defineProps<{

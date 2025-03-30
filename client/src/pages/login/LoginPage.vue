@@ -1,13 +1,13 @@
 <script setup lang="ts">
     import { reactive } from 'vue';
     import FormComponent from '@/components/FormComponent.vue';
-    import type { ButtonComponent, FieldComponent } from '@/types';
+    import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
     import useAuthStore from '@/stores/auth-store';
 
     const formData = reactive<{
         formLegend: string;
-        fields: FieldComponent[];
-        actions: ButtonComponent[];
+        fields: FieldComponentProps[];
+        actions: ButtonComponentProps[];
     }>({
         formLegend: 'Login',
         fields: [
@@ -30,7 +30,6 @@
         });
 
         if (!success) {
-			//idk
 			if (error) {
 				//TODO: handle error
 			}

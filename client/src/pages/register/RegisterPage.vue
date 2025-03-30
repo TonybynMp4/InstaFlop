@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import FormComponent from '@/components/FormComponent.vue';
-import type { ButtonComponent, FieldComponent } from '@/types';
+import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
 import baseURL from '@/baseUrl';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 
 const formData = reactive<{
 	formLegend: string;
-	fields: FieldComponent[];
-	actions: ButtonComponent[];
+	fields: FieldComponentProps[];
+	actions: ButtonComponentProps[];
 }>({
 	formLegend: 'Créer un compte',
 	fields: [
@@ -53,8 +53,8 @@ function onsubmit(event: Event) {
 			router.push('/login');
 			alert('Registration successful! You can now log in.');
 		})
-}
-/* TODO: error handling (console log c'pas très user friendly) */
+	}
+	/* TODO: error handling (console log c'pas très user friendly) */
 </script>
 
 <template>

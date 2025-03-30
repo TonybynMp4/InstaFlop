@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import ProfilePicture from '@/components/profile/ProfilePictureComponent.vue';
 	import Username from '@/components/profile/UsernameComponent.vue';
-	import type { PostComponent } from '@/types';
+	import type { PostComponentProps } from '@/types/components';
 	import { EllipsisVertical, Heart, Share } from 'lucide-vue-next';
 	import { ref } from 'vue';
 	import CommentSection from './CommentSectionComponent.vue';
@@ -9,7 +9,7 @@
 	const authStore = useAuthStore();
 
 	const props = defineProps<{
-		post: PostComponent;
+		post: PostComponentProps;
 	}>();
 
 	const playLikeAnimation = ref(false);

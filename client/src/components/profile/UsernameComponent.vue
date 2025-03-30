@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import { defineProps } from 'vue';
-	import type { UsernameComponent } from '@/types';
+	import type { UsernameComponentProps } from '@/types/components';
 
-	const props = defineProps<UsernameComponent>();
+	const props = defineProps<UsernameComponentProps>();
 	const { username } = props;
 </script>
 

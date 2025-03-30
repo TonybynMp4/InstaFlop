@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ButtonComponent from './ButtonComponent.vue';
 import FieldComponent from './FieldComponent.vue';
-import type { FormComponent } from '../types';
+import type { FormComponentProps } from '../types/components';
 
-defineProps<FormComponent>();
+defineProps<FormComponentProps>();
 const emit = defineEmits(['fieldChange']);
 
 const handleFieldChange = (payload: { id: string, val: string }) => {

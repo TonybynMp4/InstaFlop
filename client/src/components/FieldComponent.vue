@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import type { FieldComponent } from '../types';
+    import type { FieldComponentProps } from '../types/components';
 
-    defineProps<FieldComponent>();
+    defineProps<FieldComponentProps>();
 </script>
 
 <template>

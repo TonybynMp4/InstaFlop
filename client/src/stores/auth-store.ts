@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import baseURL from '@/baseUrl';
 import { useRouter } from 'vue-router';
-import type { User } from '@/types';
+import type { User } from '@/types/types';
 
 const useAuthStore = defineStore('auth', () => {
 	const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));

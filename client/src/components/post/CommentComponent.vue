@@ -1,10 +1,10 @@
 <script setup lang="ts">
 	import { defineProps } from 'vue';
-	import type { CommentComponent } from '@/types';
+	import type { CommentComponentProps } from '@/types/components';
 	import Username from '@/components/profile/UsernameComponent.vue';
 	import ProfilePicture from '../profile/ProfilePictureComponent.vue';
 
-	const props = defineProps<CommentComponent>();
+	const props = defineProps<CommentComponentProps>();
 	const { username, profilePicture, content, createdAt } = props.comment;
 
 	const date = new Date(createdAt);
