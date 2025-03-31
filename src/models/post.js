@@ -1,16 +1,6 @@
-const db = require('./db')
-
-async function getRelatedData(table, foreignKey, id) {
-    return new Promise((resolve, reject) => {
-        db.execute(`SELECT * from ${table} WHERE ${foreignKey} = ?`, [id], (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
+const db = require('./db');
+const PostMedia = require('./postMedia');
+const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
 
 class Post {
     static async getAll({ withMedia = false, withComments = false, withLikes = false }) {
@@ -22,9 +12,9 @@ class Post {
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getRelatedData('post_medias', 'post_id', row.id);
-                        if (withComments) row.comments = await getRelatedData('comments', 'post_id', row.id);
-                        if (withLikes) row.likes = await getRelatedData('likes', 'post_id', row.id);
+                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withLikes) row.likes = await getLikes(row.id);
+                        if (withComments) row.comments = await getComments(row.id);
                     }
 
                     resolve(rows);
@@ -35,18 +25,67 @@ class Post {
         });
     }
 
-    static async getById(id, { withMedia = false, withComments = false, withLikes = false }) {
+	static async getFeed({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId }) {
+		if (!authUserId) {
+			throw new Error('authUserId is required');
+		}
+
+		const query = `
+			SELECT post.*, user.displayname, user.profile_picture
+			FROM posts AS post
+			LEFT JOIN users AS user
+			ON post.user_id = user.id
+			WHERE post.user_id IN (
+				SELECT following_id FROM followers WHERE follower_id = ?
+			)
+			OR post.user_id = ?
+			ORDER BY post.created_at DESC
+		`;
+
+		return new Promise((resolve, reject) => {
+			db.query(query, [authUserId, authUserId], async (err, rows) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                try {
+                    for (let row of rows) {
+                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withLikes) row.likes = await getLikes(row.id);
+                        if (withComments) row.comments = await getComments(row.id);
+						if (withLiked) {
+							row.liked = await getLiked(row.id, authUserId);
+						}
+
+                    }
+
+                    resolve(rows);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+		});
+	}
+
+    static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
-            db.execute('SELECT * from posts WHERE id = ?', [id], (err, rows) => {
+			const query = `SELECT post.*, user.id, user.displayname, user.profile_picture
+				FROM posts AS post
+				LEFT JOIN users AS user
+				ON post.user_id = user.id WHERE post.id = ?
+			`;
+
+            db.execute(query, [id], async (err, rows) => {
                 if (err)
                     reject(err);
                 else
                     try {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
-                        if (withMedia) post.media = getRelatedData('post_medias', 'post_id', post.id);
-                        if (withComments) post.comments = getRelatedData('comments', 'post_id', post.id);
-                        if (withLikes) post.likes = getRelatedData('likes', 'post_id', post.id);
+                        if (withMedia) post.media = await getMedias(post.id);
+                        if (withComments) post.comments = await getComments(post.id);
+                        if (withLikes) post.likes = await getLikes(post.id);
+						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
 
                         resolve(post);
                     } catch (error) {
@@ -56,21 +95,26 @@ class Post {
         });
     }
 
-    static async create({ title, description, user_id }) {
+    static async create({ content, mediaUrls, user_id }) {
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO posts (title, description, user_id) VALUES (?, ?, ?)', [title, description, user_id], (err, rows) => {
+            db.execute('INSERT INTO posts (user_id, description) VALUES (?, ?)', [user_id, content], async (err, rows) => {
                 if (err)
                     reject(err);
                 else {
                     if (rows.affectedRows === 0)
                         reject(new Error('post not created'));
-                    else
-                        db.execute('SELECT * FROM posts WHERE id = ?', [rows.insertId], (err, rows) => {
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(rows[0]);
-                        });
+                    else {
+						if (mediaUrls && mediaUrls.length > 0) {
+							const medias = await PostMedia.create({ mediaUrls, user_id, postId: rows.insertId });
+							if (!medias) {
+								await this.delete(rows.insertId);
+								reject(new Error('post medias not created'));
+							}
+						}
+
+						const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
+						resolve(post);
+					}
                 }
             });
         });

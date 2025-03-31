@@ -5,29 +5,28 @@ Instagram-like app for sharing photos and videos.
 
 # TODO List
 
-- [ ] User registration
-- [ ] User login
+- [x] User registration
+- [x] User login
 
 - [ ] models
   - [x] User
-  - [ ] Post
+  - [x] Post
   - [ ] Comment
   - [ ] Like
   - [ ] Follow
 
 - [ ] API routes
 
-- [ ] Uploadthing integration
-- [ ] Post creation
-- [ ] Post page
+- [x] Uploadthing integration
+- [x] Post creation
+- [x] Post page
 - [ ] Post edit
 - [ ] User profile
 - [ ] User settings
-- [ ] User search
+- [ ] search / Global feed
 - [ ] User follow
-- [ ] Follow feed
-- [ ] Global feed
+- [x] Follow feed
 - [ ] Post like
 - [ ] Post comment
-- [ ] Post share?
+- [ ] Post share? (https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share)
 

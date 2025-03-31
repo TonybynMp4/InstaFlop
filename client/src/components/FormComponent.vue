@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ButtonComponent from './ButtonComponent.vue';
 import FieldComponent from './FieldComponent.vue';
-import type { FormComponent } from '../types';
+import type { FormComponentProps } from '../types/components';
 
-defineProps<FormComponent>();
+defineProps<FormComponentProps>();
 const emit = defineEmits(['fieldChange']);
 
 const handleFieldChange = (payload: { id: string, val: string }) => {
@@ -18,7 +18,7 @@ const handleFieldChange = (payload: { id: string, val: string }) => {
 
             <FieldComponent v-for="field in fields" :key="field.id" :id="field.id" :label="field.label"
             @fieldChange="handleFieldChange"
-            :placeholder="field.placeholder" :type="field.type" :required="field.required" />
+            :placeholder="field.placeholder" :type="field.type" :required="field.required" :defaultValue="field.defaultValue" />
 
             <section class="actions">
                 <ButtonComponent v-for="action in actions" :key="action.id" :id="action.id" :label="action.label"
@@ -29,24 +29,21 @@ const handleFieldChange = (payload: { id: string, val: string }) => {
 </template>
 
 <style scoped>
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
 form {
-    font-family: monospace;
-    width: 50%;
+    width: 80%;
 }
 
 fieldset {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+	border-radius: 1rem;
+	padding: 2rem;
+	border: 1px solid #a5a5a5;
 }
 
 .actions {
+	display: flex;
     flex-direction: row;
     gap: 1rem;
 }
