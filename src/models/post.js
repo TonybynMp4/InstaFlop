@@ -3,7 +3,7 @@ const PostMedia = require('./postMedia');
 const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
 
 class Post {
-    static async getAll({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
+    static async getAll({ withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
 				FROM posts AS post
@@ -31,7 +31,7 @@ class Post {
         });
     }
 
-	static async getFeed({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId }) {
+	static async getFeed({ withMedia = true, withComments = true, withLikes = true, withLiked = true, authUserId }) {
 		if (!authUserId) {
 			throw new Error('authUserId is required');
 		}
@@ -72,7 +72,7 @@ class Post {
 		});
 	}
 
-    static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
+    static async getById(id, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
 				FROM posts AS post
@@ -100,6 +100,35 @@ class Post {
         });
     }
 
+	static async getPostsByUserId(user_id, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
+		return new Promise((resolve, reject) => {
+			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
+				FROM posts AS post
+				LEFT JOIN users AS user
+				ON post.user_id = user.id WHERE post.user_id = ?
+			`;
+
+			db.execute(query, [user_id], async (err, rows) => {
+				if (err)
+					reject(err);
+				else
+					try {
+						if (rows.length === 0) return resolve(null);
+						let post = rows[0];
+
+						if (withMedia) post.medias = await getMedias(post.id);
+						if (withComments) post.comments = await getComments(post.id);
+						if (withLikes) post.likes = await getLikes(post.id);
+						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
+
+						resolve(post);
+					} catch (error) {
+						reject(error);
+					}
+			});
+		});
+	}
+
     static async create({ content, mediaUrls, user_id }) {
         return new Promise((resolve, reject) => {
             db.execute('INSERT INTO posts (user_id, description) VALUES (?, ?)', [user_id, content], async (err, rows) => {
@@ -117,7 +146,7 @@ class Post {
 							}
 						}
 
-						const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
+						const post = await this.getById(rows.insertId);
 						resolve(post);
 					}
                 }
