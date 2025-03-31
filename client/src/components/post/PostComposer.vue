@@ -56,7 +56,7 @@
 <template>
 	<form class="post-composer" @submit.prevent="publishPost">
 		<div class="post-composer__input">
-			<ProfilePictureComponent :src="authStore.getUser?.profilePicture" :fallback="authStore.getUser?.username" />
+			<ProfilePictureComponent :src="authStore.getUser?.profilePicture" :fallback="authStore.getUser?.username || '?'" />
 			<textarea name="post" id="post" cols="30" rows="3" placeholder="What's on your mind?"></textarea>
 		</div>
 		<div class="post-composer__media-preview">

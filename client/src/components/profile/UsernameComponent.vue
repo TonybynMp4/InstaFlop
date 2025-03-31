@@ -3,11 +3,11 @@
 	import type { UsernameComponentProps } from '@/types/components';
 
 	const props = defineProps<UsernameComponentProps>();
-	const { username } = props;
+	const { username, displayname } = props;
 </script>
 
 <template>
-	<router-link :to="`/profile/${username}`" class="username">@{{ username }}</router-link>
+	<router-link :to="`/profile/${username}`" class="username">{{ displayname ?? '@' + username }}</router-link>
 </template>
 
 <style scoped>

@@ -29,15 +29,19 @@ type ButtonComponentProps = {
 
 interface UsernameComponentProps {
 	username: string;
+	displayname?: string;
 }
 
 interface PostComponentProps {
+	user: {
+		username: string;
+		displayname?: string;
+		profilePicture?: string;
+	};
 	id: number;
 	content: string;
-	image: string;
+	images: string[];
 	liked: boolean;
-	username: string;
-	profilePicture: string;
 	likes: number;
 	createdAt: string;
 	comments: Comment[];
@@ -48,8 +52,8 @@ type CommentComponentProps = {
 }
 
 interface ProfilePictureComponent {
-	src?: string;
-	fallback?: string;
+	src?: string | null;
+	fallback: string;
 }
 
 export type {

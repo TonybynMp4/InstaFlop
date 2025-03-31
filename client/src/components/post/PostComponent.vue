@@ -17,6 +17,7 @@
 		const post = props.post;
 		if (!post) return;
 		post.liked = !post.liked;
+		post.likes += post.liked ? 1 : -1;
 
 		if (post.liked) {
 			playLikeAnimation.value = true;
@@ -39,24 +40,36 @@
 		});
 	};
 
+	const sharePost = () => {
+		if (!props.post) return;
+		const postUrl = `${window.location.origin}/post/${props.post.id}`;
+		navigator.share({
+			title: props.post.content,
+			url: postUrl
+		}).catch((error) => console.error('Error sharing:', error));
+	};
+
 </script>
 
 <template>
 	<article class="post">
 		<div class="post_main">
-			<div style="position: relative;" v-if="props.post.image">
-				<img class="post_image" :src="props.post.image" alt="image" />
+			<div style="position: relative;" v-if="props.post.images && props.post.images.length > 0">
+				<img class="post_image" :src="props.post.images[0]" alt="image" /> <!-- TODO: gallery component -->
 				<Heart class="heartBurst toggleHeartBurst" v-if="playLikeAnimation" />
 			</div>
 			<div class="post_details">
 				<div class="post_details_upper">
 					<div class="post_user">
-						<ProfilePicture :src="props.post.profilePicture" :fallback="props.post.username" />
-						<Username :username="props.post.username" />
+						<ProfilePicture :src="props.post.user.profilePicture" :fallback="props.post.user.username" />
+						<Username :username="props.post.user.username" :displayname="props.post.user.displayname" />
 					</div>
 					<div class="post_actions">
-						<Heart class="post_action" :class="{ 'liked': props.post.liked }" @click="likePost()" />
-						<Share class="post_action" />
+						<div class="post_like">
+							<Heart class="post_action" :class="{ 'liked': props.post.liked }" @click="likePost()" />
+							<span>{{ props.post.likes }}</span>
+						</div>
+						<Share class="post_action" @click="sharePost()"/>
 						<EllipsisVertical class="post_action" />
 					</div>
 				</div>
@@ -76,6 +89,13 @@
 		border-radius: 1rem;
 		width: 100%;
 		max-height: 50rem;
+	}
+
+	.post_like {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		cursor: pointer;
 	}
 
 	.post_user {

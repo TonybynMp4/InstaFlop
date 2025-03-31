@@ -12,6 +12,7 @@ const useAuthStore = defineStore('auth', () => {
 		user.value = newUser === null ? null : {
 			id: newUser.id,
 			username: newUser.username,
+			displayname: newUser.displayname,
 			email: newUser.email,
 			role: newUser.role,
 			profilePicture: newUser.profilePicture
@@ -38,7 +39,10 @@ const useAuthStore = defineStore('auth', () => {
 			return null;
 		});
 
-		return user;
+		return {
+			...user,
+			profilePicture: user.profile_picture
+		};
 	}
 
 	async function login(credentials: { email: string, password: string }) {
