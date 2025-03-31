@@ -3,12 +3,14 @@
 
     //calculer le temps restant avant le 2 avril 2025 14h
     const timeLeft = ref('');
+    const timedOut = ref(false);
 
     const calculateTimeLeft = () => {
-        const difference = +new Date('2025-04-02 14:00') - +new Date();
+        const difference = new Date('2025-04-02 14:00').getTime() - new Date().getTime();
 
         if (difference <= 0) {
-            timeLeft.value = 'C\'est toujours là? Oh la sauce..';
+			timeLeft.value = `0 jours, 0 heures, 0 minutes, 0 secondes`;
+            timedOut.value = true;
             return;
         }
 
@@ -28,13 +30,14 @@
     <main>
         <h1>Bienvenue sur le pire réseau social du monde</h1>
 
-        <p>
-            WIP: ce projet est encore en cours de développement!
-        </p>
         <p style="font-size: 1.5rem; font-weight: bold;">
             Temps restant avant qu'on flop le cours de Node.js:
         </p>
         <time style="font-size: 2rem; font-weight: bold;">{{ timeLeft }}</time>
+		<p v-if="timedOut">
+			C'est toujours là? Oh la sauce..
+		</p>
+
     </main>
 </template>
 

@@ -61,6 +61,7 @@
 
 	.post_comment_form {
 		display: flex;
+		flex-direction: column;
 		gap: 1rem;
 		align-items: center;
 		width: 100%;
