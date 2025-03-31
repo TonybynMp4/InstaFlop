@@ -5,10 +5,13 @@ export default function sanitizePosts(posts: serverPost[]) : PostComponentProps[
 	return posts.map((post) => ({
 		id: post.id,
 		content: post.description,
-		image: post.media.length > 0 ? post.media[0].media_url : '',
+		images: post.medias.map((image) => image.media_url),
+		user: {
+			username: post.username,
+			displayname: post.displayname,
+			profilePicture: post.profile_picture,
+		},
 		liked: post.liked,
-		username: post.displayname,
-		profilePicture: post.profile_picture,
 		likes: post.likes,
 		createdAt: post.created_at,
 		comments: post.comments.map((comment) => ({

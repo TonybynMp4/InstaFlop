@@ -4,7 +4,7 @@
 	import type { serverPost } from '@/types/apiResponses';
 	import type { PostComponentProps } from '@/types/components';
 	import { onMounted, reactive } from 'vue';
-	import sanitizePosts from './sanitizePosts';
+	import sanitizePosts from '@/utils/sanitizePosts';
 
 	const posts = reactive<PostComponentProps[]>([]);
 	type getFeedResponse = serverPost[] | { error: string };
