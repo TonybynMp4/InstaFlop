@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+	"build:client": "npm run build --prefix ./client",
     "start": "node server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon server.js",
-    "client": "npm run dev --prefix ./client",
-    "build:client": "npm run build --prefix ./client",
-    "i": "rm -rf node_modules package-lock.json && npm install"
+    "dev:server": "nodemon server.js",
+    "dev:client": "npm run dev --prefix ./client",
+	"prestart": "npm run build:client",
+	"predev": "npm run i",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "i:server": "rm -rf node_modules package-lock.json && npm install",
+	"i:client": "rm -rf ./client/node_modules ./client/package-lock.json && npm install --prefix ./client",
+	"i": "npm run i:server && npm run i:client"
   },
   "keywords": [],
   "author": "",
