@@ -28,7 +28,7 @@
             </li>
             <li v-if="isLoggedIn">
 				<router-link class="action-btn" to="/profile">
-					<ProfilePictureComponent :src="authStore.getUser?.profilePicture" :fallback="authStore.getUser?.username" />
+					<ProfilePictureComponent :src="authStore.getUser?.profilePicture" :fallback="authStore.getUser?.username ?? '?'" />
 				</router-link>
 			</li>
             <li v-if="isLoggedIn">
