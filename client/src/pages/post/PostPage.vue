@@ -5,12 +5,12 @@ const post = {
 	id: 1,
 	content: 'Enjoying a beautiful day at the beach! 🏖️ #summer #vacation',
 	image: '/images/1.jpg',
-	comments: [
-		{ id: 1, username: 'JohnDoe', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.' },
-		{ id: 2, username: 'JaneDoe', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus molestias quo delectus modi nihil earum recusandae facere dignissimos, reprehenderit id, tenetur, blanditiis aspernatur architecto nemo expedita. Odit aliquid commodi expedita.' },
-	],
+	comments: [],
 	liked: true,
+	likes: 10,
 	username: 'JohnDoe',
+	profilePicture: '/images/1.jpg',
+	createdAt: '2023-10-01T12:00:00Z'
 }
 </script>
 
