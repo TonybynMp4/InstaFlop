@@ -113,7 +113,6 @@ class Post {
 						}
 
 						const post = await this.getById(rows.insertId, { withMedia: true, withComments: true, withLikes: true });
-						console.log('post created', post);
 						resolve(post);
 					}
                 }

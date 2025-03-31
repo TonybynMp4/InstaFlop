@@ -23,7 +23,6 @@ const useAuthStore = defineStore('auth', () => {
 	const getUser = computed(() => user.value);
 
 	async function readUser() {
-		console.log('Reading user from API...');
 		const user = await fetch(baseURL + '/api/user', {
 			credentials: 'include'
 		})

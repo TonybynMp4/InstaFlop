@@ -27,7 +27,6 @@
 	});
 
 	const addPost = (post: serverPost) => {
-		console.log('Post published:', post);
 		if (!post) return;
 		posts.unshift(sanitizePosts([post])[0]);
 	};
