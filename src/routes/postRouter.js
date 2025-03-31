@@ -5,7 +5,8 @@ const router = require('express').Router();
 
 // public API
 router.get('/getPost/:id', async (req, res) => {
-    const { id, user_id } = req.params;
+    const { id } = req.params;
+    const user_id = req.auth.id;
     try {
         const post = await Post.getById(id, { withMedia: true, withComments: true, withLikes: true, withLiked: !!user_id, authUserId: user_id });
         if (post)
@@ -21,7 +22,7 @@ router.use(auth);
 // protected API (only authenticated users can access)
 
 router.get('/getPosts', async (req, res) => {
-	const { user_id } = req.params;
+    const { id: user_id } = req.auth;
     try {
         const posts = await Post.getAll({ withMedia: true, withComments: true, withLikes: true, withLiked: true, authUserId: user_id });
         res.status(200).json(posts);
