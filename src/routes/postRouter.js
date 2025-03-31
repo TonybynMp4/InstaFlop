@@ -4,19 +4,10 @@ const Post = require('../models/post');
 const router = require('express').Router();
 
 // public API
-router.get('/getPosts', async (req, res) => {
-    try {
-        const posts = await Post.getAll({ withMedia: true, withComments: true, withLikes: true });
-        res.status(200).json(posts);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 router.get('/getPost/:id', async (req, res) => {
-    const { id, queryParam } = req.params;
+    const { id, user_id } = req.params;
     try {
-        const post = await Post.getById(id, queryParam);
+        const post = await Post.getById(id, { withMedia: true, withComments: true, withLikes: true, withLiked: !!user_id, authUserId: user_id });
         if (post)
             res.status(200).json(post);
         else
@@ -28,6 +19,16 @@ router.get('/getPost/:id', async (req, res) => {
 
 router.use(auth);
 // protected API (only authenticated users can access)
+
+router.get('/getPosts', async (req, res) => {
+	const { user_id } = req.params;
+    try {
+        const posts = await Post.getAll({ withMedia: true, withComments: true, withLikes: true, withLiked: true, authUserId: user_id });
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 router.post('/', async (req, res) => {
     const { content, mediaUrls } = req.body;
