@@ -3,19 +3,25 @@ const PostMedia = require('./postMedia');
 const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
 
 class Post {
-    static async getAll({ withMedia = false, withComments = false, withLikes = false }) {
-        return new Promise((resolve, reject) => {
-            db.query('SELECT * from posts ORDER BY created_at DESC', async (err, rows) => {
+    static async getAll({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
+		return new Promise((resolve, reject) => {
+			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
+				FROM posts AS post
+				LEFT JOIN users AS user
+				ON post.user_id = user.id
+			`;
+            db.query(query, async (err, rows) => {
                 if (err) {
                     return reject(err);
                 }
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withMedia) row.medias = await getMedias(row.id);
                         if (withLikes) row.likes = await getLikes(row.id);
                         if (withComments) row.comments = await getComments(row.id);
-                    }
+						if (withLiked) row.liked = await getLiked(row.id, authUserId);
+					}
 
                     resolve(rows);
                 } catch (error) {
@@ -31,7 +37,7 @@ class Post {
 		}
 
 		const query = `
-			SELECT post.*, user.displayname, user.profile_picture
+			SELECT post.*, user.username, user.displayname, user.profile_picture
 			FROM posts AS post
 			LEFT JOIN users AS user
 			ON post.user_id = user.id
@@ -50,13 +56,12 @@ class Post {
 
                 try {
                     for (let row of rows) {
-                        if (withMedia) row.media = await getMedias(row.id);
+                        if (withMedia) row.medias = await getMedias(row.id);
                         if (withLikes) row.likes = await getLikes(row.id);
                         if (withComments) row.comments = await getComments(row.id);
 						if (withLiked) {
 							row.liked = await getLiked(row.id, authUserId);
 						}
-
                     }
 
                     resolve(rows);
@@ -69,7 +74,7 @@ class Post {
 
     static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
-			const query = `SELECT post.*, user.id, user.displayname, user.profile_picture
+			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
 				FROM posts AS post
 				LEFT JOIN users AS user
 				ON post.user_id = user.id WHERE post.id = ?
@@ -82,7 +87,7 @@ class Post {
                     try {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
-                        if (withMedia) post.media = await getMedias(post.id);
+                        if (withMedia) post.medias = await getMedias(post.id);
                         if (withComments) post.comments = await getComments(post.id);
                         if (withLikes) post.likes = await getLikes(post.id);
 						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
