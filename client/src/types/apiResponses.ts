@@ -22,10 +22,11 @@ type serverPost = {
 	user_id: number;
 	description: string;
 	created_at: string;
+	username: string;
 	displayname: string;
-	profile_picture: string;
+	profile_picture?: string;
 	liked: boolean;
-	media: serverMedia[];
+	medias: serverMedia[];
 	likes: number;
 	comments: serverComment[];
 }
