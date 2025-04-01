@@ -147,7 +147,7 @@ class Post {
 							}
 						}
 
-						const post = await this.getById(rows.insertId);
+						const post = await this.getById(rows.insertId, {});
 						resolve(post);
 					}
                 }
