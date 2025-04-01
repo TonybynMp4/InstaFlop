@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     `email` VARCHAR(255) NOT NULL UNIQUE,
     `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     `password` VARCHAR(255) NOT NULL,
+	`bio` VARCHAR(255),
     `profile_picture` VARCHAR(255),
     `created_at` TIMESTAMP NOT NULL DEFAULT NOW()
 );

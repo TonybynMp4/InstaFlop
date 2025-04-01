@@ -36,7 +36,6 @@ const closeDialog = () => dialogRef.value?.close();
 				<h2>{{ userData.displayname }}</h2>
 				<div class="buttons">
 					<button class="follow-btn">Follow</button>
-
 					<button class="settings-btn" @click="openDialog">⚙️</button>
 				</div>
 				<p class="stats">
@@ -111,6 +110,10 @@ const closeDialog = () => dialogRef.value?.close();
 .follow-btn {
 	background-color: #e1306c;
 	color: white;
+}
+
+.message-btn {
+	background-color: #f0f0f0;
 }
 
 .stats span {
