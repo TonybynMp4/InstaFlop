@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import useAuthStore from "@/stores/auth-store";
+import ProfilePicture from "@/components/profile/ProfilePictureComponent.vue";
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.getUser);
 
 const userData = ref({
 	username: user.value?.username ?? "Username",
-	fullName: user.value?.fullName ?? "Full Name",
+	displayname: user.value?.displayname ?? "Display Name",
 	bio: user.value?.bio ?? "Photographer | Traveler | Coffee Enthusiast",
 	profilePicture:
 		user.value?.profilePicture ?? authStore.getUser.profilePicture,
@@ -25,17 +26,16 @@ const closeDialog = () => dialogRef.value?.close();
 <template>
 	<main class="profile-container">
 		<section class="profile-header">
-			<img
-				:src="userData.profilePicture"
-				alt="Profile Picture"
+			<ProfilePicture
 				class="profile-picture"
-				@click="openDialog"
-			/>
+				:src="userData.profilePicture"
+				:fallback="userData.username"
+			></ProfilePicture>
 			<div class="profile-info">
 				<h1>{{ userData.username }}</h1>
+				<h2>{{ userData.displayname }}</h2>
 				<div class="buttons">
 					<button class="follow-btn">Follow</button>
-					<button class="message-btn">Message</button>
 					<button class="settings-btn" @click="openDialog">⚙️</button>
 				</div>
 				<p class="stats">
@@ -51,7 +51,7 @@ const closeDialog = () => dialogRef.value?.close();
 						following</span
 					>
 				</p>
-				<p class="full-name">{{ userData.fullName }}</p>
+				<p class="full-name">{{}}</p>
 				<p class="bio">{{ userData.bio }}</p>
 				<a :href="userData.website" target="_blank" class="website">{{
 					userData.website
@@ -99,9 +99,7 @@ const closeDialog = () => dialogRef.value?.close();
 	margin: 10px 0;
 }
 
-.follow-btn,
-.message-btn,
-.settings-btn {
+.follow-btn .settings-btn {
 	padding: 8px 15px;
 	margin: 5px;
 	border: none;
