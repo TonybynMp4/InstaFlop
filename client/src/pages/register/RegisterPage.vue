@@ -4,7 +4,9 @@ import FormComponent from '@/components/FormComponent.vue';
 import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
 import baseURL from '@/baseUrl';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 const router = useRouter()
+const error = ref<string | {msg:string} |null>(null);
 
 const formData = reactive<{
 	formLegend: string;
@@ -32,6 +34,7 @@ function onsubmit(event: Event) {
 		displayname: (event.target as HTMLFormElement).displayname.value,
 		password: (event.target as HTMLFormElement).password.value
 	})
+
 	fetch(baseURL + '/api/user', {
 		method: 'POST',
 		headers: {
@@ -45,7 +48,7 @@ function onsubmit(event: Event) {
 		.then(response => {
 			if (!response.ok || response.errors) {
 				console.error('Custom errors:', response.errors, "Server error:", response.error);
-				alert('An error occurred, please try again.');
+				error.value = response.errors ? response.errors : response.error;
 				return;
 			}
 			console.log('Success:', response);
@@ -53,12 +56,22 @@ function onsubmit(event: Event) {
 			router.push('/login');
 			alert('Registration successful! You can now log in.');
 		})
+		.catch(error => {
+			console.error('Error:', error);
+			error.value = error;
+		});
 	}
-	/* TODO: error handling (console log c'pas très user friendly) */
 </script>
 
 <template>
 	<main>
+		<div class="errors" v-if="error">
+			<p v-if="typeof error === 'string'">{{ error }}</p>
+			<ul v-else-if="Array.isArray(error)">
+				<li v-for="(err, index) in error" :key="index">{{ err.msg }}</li>
+			</ul>
+			<p v-else>{{ error }}</p>
+		</div>
 		<FormComponent :formLegend="formData.formLegend" :fields="formData.fields" :actions="formData.actions"
 			:onSubmit="onsubmit" />
 	</main>
@@ -67,9 +80,24 @@ function onsubmit(event: Event) {
 <style scoped>
 main {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	width: 50%;
 	margin: 3rem auto;
+}
+
+.errors {
+	color: red;
+	font-size: 1.2rem;
+	margin-bottom: 1rem;
+	border: 1px solid red;
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+.errors ul {
+	list-style-type: disc;
+	padding-left: 1.5rem;
 }
 </style>
