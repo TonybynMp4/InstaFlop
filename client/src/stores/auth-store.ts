@@ -39,10 +39,7 @@ const useAuthStore = defineStore('auth', () => {
 			return null;
 		});
 
-		return {
-			...user,
-			profilePicture: user.profile_picture
-		};
+		return user;
 	}
 
 	async function login(credentials: { email: string, password: string }) {
@@ -61,14 +58,13 @@ const useAuthStore = defineStore('auth', () => {
 			}
 
 			const user = await readUser();
-			if (user) {
-				setUser(user);
-			} else {
+			if (!user) {
 				console.error('User not found after login');
 				return [false, "User not found after login"];
 			}
 
-			router.push('/profile');
+			setUser(user);
+			router.push('/home');
 			return [true, null];
 		} catch (error) {
 			console.error('Login error:', error);
