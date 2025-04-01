@@ -1,6 +1,7 @@
 const db = require('./db');
 const PostMedia = require('./postMedia');
-const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
+const { getLiked, getMedias, getLikes } = require('./postUtils');
+const { getByPostId: getComments } = require('./comment');
 
 class Post {
     static async getAll({ withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
@@ -72,7 +73,7 @@ class Post {
 		});
 	}
 
-    static async getById(id, { withMedia = false, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
+    static async getById(id, { withMedia = true, withComments = false, withLikes = false, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
 				FROM posts AS post

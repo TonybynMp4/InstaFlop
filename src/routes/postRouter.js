@@ -6,9 +6,10 @@ const router = require('express').Router();
 // public API
 router.get('/getPost/:id', async (req, res) => {
     const { id } = req.params;
-    const user_id = req.auth.id;
+    const user_id = req?.auth?.id;
+
     try {
-        const post = await Post.getById(id, { withMedia: true, withComments: true, withLikes: true, withLiked: !!user_id, authUserId: user_id });
+        const post = await Post.getById(id, { withComments: true, withLikes: true, withLiked: !!user_id, authUserId: user_id });
         if (post)
             res.status(200).json(post);
         else
