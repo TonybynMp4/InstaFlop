@@ -4,8 +4,13 @@ interface User {
 	displayname: string;
     email: string;
     role: string;
-	bio: string;
 	profilePicture: string;
+}
+
+interface ProfileUser extends User {
+	bio: string;
+	followers: number;
+	following: number;
 }
 
 interface Comment {

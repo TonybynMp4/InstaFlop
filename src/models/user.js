@@ -1,5 +1,6 @@
 const db = require('./db')
 const bcrypt = require('bcrypt');
+const Follow = require('./follow');
 
 class User {
     static async getById(id) {
@@ -7,16 +8,27 @@ class User {
             throw new Error('id is required');
         }
 
-        return {
-			id: id,
-			username: null,
-			displayname: null,
-			email: null,
-			password: null,
-			role: null,
-			profile_picture: null
-		};
-    }
+		return new Promise((resolve, reject) => {
+			db.execute('SELECT id, username, displayname, profile_picture, bio FROM users WHERE id = ?', [id], async (err, rows) => {
+				if(err) return reject(err);
+				if (rows.length === 0) return resolve(null);
+
+				const followerCount = await Follow.getFollowerCount(id);
+				const followingCount = await Follow.getFollowingCount(id);
+
+				const user = {
+					id: rows[0].id,
+					username: rows[0].username,
+					displayname: rows[0].displayname,
+					profilePicture: rows[0].profile_picture,
+					bio: rows[0].bio,
+					followerCount: followerCount,
+					followingCount: followingCount
+				}
+				resolve(user);
+			});
+		});
+	}
 
     static async getByEmail(email) {
         if (!email) {
