@@ -1,6 +1,7 @@
 const db = require('./db');
 const PostMedia = require('./postMedia');
-const { getComments, getLiked, getMedias, getLikes } = require('./postUtils');
+const { getLiked, getMedias, getLikes } = require('./postUtils');
+const { getByPostId: getComments } = require('./comment');
 
 class Post {
     static async getAll({ withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {

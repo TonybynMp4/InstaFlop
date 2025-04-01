@@ -3,6 +3,8 @@
     import FormComponent from '@/components/FormComponent.vue';
     import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
     import useAuthStore from '@/stores/auth-store';
+	import { ref } from 'vue';
+	const error = ref<string | null>(null);
 
     const formData = reactive<{
         formLegend: string;
@@ -24,31 +26,28 @@
         event.preventDefault();
         const authStore = useAuthStore();
 
-		const [success, error] = await authStore.login({
+		const [success, loginError] = await authStore.login({
             email: (event.target as HTMLFormElement).email.value,
             password: (event.target as HTMLFormElement).password.value
         });
 
         if (!success) {
-			if (error) {
-				//TODO: handle error
+			if (loginError) {
+					error.value = loginError.error ?? loginError;
 			}
         }
-    }
-
-    const rFormData = reactive({}) as { [key: string]: string };
-    const onFieldChange = ({ id, val }: { id: string, val: string }) => {
-        rFormData[id] = val;
     }
 </script>
 
 <template>
     <main>
+		<div class="errors" v-if="error">
+			<p>{{ error }}</p>
+		</div>
         <FormComponent
             :formLegend="formData.formLegend"
             :fields="formData.fields"
             :actions="formData.actions"
-            @fieldChange="onFieldChange"
             :onSubmit="onSubmit"
         />
     </main>
@@ -57,9 +56,24 @@
 <style scoped>
     main {
         display: flex;
-        justify-content: center;
+		flex-direction: column;
+		justify-content: center;
         align-items: center;
         width: 50%;
         margin: 3rem auto;
     }
+
+	.errors {
+		color: red;
+		font-size: 1.2rem;
+		margin-bottom: 1rem;
+		border: 1px solid red;
+		border-radius: 1rem;
+		padding: 1rem;
+	}
+
+	.errors ul {
+		list-style-type: disc;
+		padding-left: 1.5rem;
+	}
 </style>

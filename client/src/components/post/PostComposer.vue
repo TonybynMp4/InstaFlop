@@ -88,7 +88,7 @@
 				alert('Upload failed');
 			},
 		}" />
-		<div class="flex gap-2 ml-auto">
+		<div class="flex gap-2 ml-auto flex-wrap justify-center">
 			<button type="reset" @click="mediaUrls = []" class="bg-red-500 h-10 text-white rounded-md px-4 py-2">Reinitialiser</button>
 			<button class="h-10" :disabled="isUploading">Publier</button>
 		</div>
@@ -96,6 +96,12 @@
 </template>
 
 <style scoped>
+	@media (max-width: 1200px) {
+		.post-composer {
+			width: 90% !important;
+		}
+	}
+
 .post-composer {
 	display: flex;
 	flex-wrap: wrap;

@@ -47,6 +47,9 @@
         flex-direction: column;
         gap: 1rem;
         align-items: center;
+		text-align: center;
 		min-height: 80vh;
+		width: 90%;
+		margin: auto;
     }
 </style>

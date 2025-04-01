@@ -7,7 +7,8 @@ const router = require('express').Router();
 // public API
 router.get('/getPost/:id', async (req, res) => {
     const { id } = req.params;
-    const user_id = req.auth.id;
+    const user_id = req?.auth?.id;
+
     try {
         const post = await Post.getById(id, { withLiked: !!user_id, authUserId: user_id });
         if (post)

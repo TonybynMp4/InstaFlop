@@ -8,11 +8,18 @@ interface User {
 }
 
 interface Comment {
-	id: number;
-	username: string;
-	profilePicture: string;
-	content: string;
-	createdAt: string;
+	user: {
+		username: string;
+		displayname: string;
+		profilePicture: string | null;
+	};
+	comment: {
+		id: number;
+		postId: number;
+		userId: number;
+		content: string;
+		createdAt: string;
+	};
 }
 
 export type {

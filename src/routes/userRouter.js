@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({
             id: user.id,
             role: user?.role || 'user',
-        }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        }, process.env.JWT_SECRET);
 
 		res.status(200).cookie('authToken', token, {
 			httpOnly: true,
