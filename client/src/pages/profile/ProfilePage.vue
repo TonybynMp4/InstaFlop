@@ -10,8 +10,7 @@ const userData = ref({
 	username: user.value?.username ?? "Username",
 	displayname: user.value?.displayname ?? "Display Name",
 	bio: user.value?.bio ?? "Photographer | Traveler | Coffee Enthusiast",
-	profilePicture:
-		user.value?.profilePicture ?? authStore.getUser.profilePicture,
+	profilePicture: user.value?.profilePicture ?? authStore.getUser?.profilePicture,
 	posts: user.value?.posts ?? 0,
 	followers: user.value?.followers ?? 0,
 	following: user.value?.following ?? 0,
@@ -30,32 +29,25 @@ const closeDialog = () => dialogRef.value?.close();
 				class="profile-picture"
 				:src="userData.profilePicture"
 				:fallback="userData.username"
-			></ProfilePicture>
+			/>
 			<div class="profile-info">
-				<h1>{{ userData.username }}</h1>
-				<h2>{{ userData.displayname }}</h2>
-				<div class="buttons">
-					<button class="follow-btn">Follow</button>
-					<button class="settings-btn" @click="openDialog">⚙️</button>
+				<div class="profile-info-top">
+					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
+					<div class="buttons">
+						<button class="follow-btn" v-if="true">Follow</button>
+						<!-- v-if TODO: boutons de SON propre profil différent des autres!!! -->
+						<button class="settings-btn" @click="openDialog" v-else>⚙️</button>
+					</div>
 				</div>
-				<p class="stats">
-					<span
-						><strong>{{ userData.posts }}</strong> posts</span
-					>
-					<span
-						><strong>{{ userData.followers }}</strong>
-						followers</span
-					>
-					<span
-						><strong>{{ userData.following }}</strong>
-						following</span
-					>
+				<p class="profile-info-bottom">
+					<h2>{{ userData.displayname }}</h2>
+					<div class="stats">
+						<span><strong>{{ userData.posts }}</strong> posts</span>
+						<span><strong>{{ userData.followers }}</strong> followers</span>
+						<span><strong>{{ userData.following }}</strong> following</span>
+					</div>
 				</p>
-				<p class="full-name">{{}}</p>
 				<p class="bio">{{ userData.bio }}</p>
-				<a :href="userData.website" target="_blank" class="website">{{
-					userData.website
-				}}</a>
 			</div>
 		</section>
 
@@ -71,6 +63,13 @@ const closeDialog = () => dialogRef.value?.close();
 </template>
 
 <style scoped>
+.profile-info-top {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
 .profile-container {
 	max-width: 800px;
 	margin: 50px auto;
@@ -96,7 +95,11 @@ const closeDialog = () => dialogRef.value?.close();
 }
 
 .buttons {
-	margin: 10px 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
 }
 
 .follow-btn .settings-btn {
@@ -116,8 +119,9 @@ const closeDialog = () => dialogRef.value?.close();
 	background-color: #f0f0f0;
 }
 
-.stats span {
-	margin-right: 15px;
+.stats {
+	display: flex;
+	gap: 1rem;
 }
 
 .gallery {
