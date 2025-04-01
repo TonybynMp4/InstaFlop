@@ -74,6 +74,18 @@
 </template>
 
 <style scoped>
+	@media (max-width: 1200px) {
+		.post {
+			flex-direction: column;
+			width: 100%;
+			max-height: unset !important;
+		}
+
+		.post_main, .post_aside, .post_image {
+			width: 100%!important;
+		}
+	}
+
 	.post {
 		display: flex;
 		gap: 1rem;
@@ -122,6 +134,7 @@
 	}
 
 	.post_aside {
+		border-left: 1px solid #a5a5a5;
 		width: 30%;
 	}
 

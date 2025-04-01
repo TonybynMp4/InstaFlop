@@ -5,11 +5,12 @@
 	import type { PostComponentProps } from '@/types/components';
 	import { onMounted, reactive } from 'vue';
 	import sanitizePosts from '@/utils/sanitizePosts';
+	import baseURL from '@/baseUrl';
 
 	const posts = reactive<PostComponentProps[]>([]);
 	type getFeedResponse = serverPost[] | { error: string };
 	onMounted(async () => {
-		await fetch('http://localhost:3000/api/post/getFeed', {
+		await fetch(baseURL + '/api/post/getFeed', {
 			method: 'GET',
 			credentials: 'include',
 			headers: { 'Content-Type': 'application/json' },

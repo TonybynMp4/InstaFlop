@@ -29,6 +29,7 @@
 			<p>Commentaires</p>
 			<div class="post_comment_section">
 				<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.comment.id" />
+				<p v-if="!props.comments" class="no_comments">Aucun commentaire</p>
 			</div>
 		</div>
 		<form v-on:submit="onSubmit" class="post_comment_form">
@@ -39,6 +40,12 @@
 </template>
 
 <style scoped>
+	.no_comments {
+		font-size: smaller;
+		text-align: center;
+		color: #888;
+	}
+
 	.post_aside {
 		display: flex;
 		justify-content: space-between;
