@@ -7,13 +7,22 @@ const validationResult = require('../middlewares/validationResult');
 const auth = require('../middlewares/auth');
 
 // public API
-router.get('/getUsers', async (req, res) => {
-    try {
-        const users = await User.getAll();
-        res.status(200).json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+router.get('/getUser/:id', async (req, res) => {
+	const userId = req.params.id;
+	if (!userId) {
+		res.status(400).json({ error: 'User ID is required' });
+		return;
+	}
+
+	try {
+		const user = await User.getById(userId);
+		if (user)
+			res.status(200).json(user);
+		else
+			res.status(404).json({ message: 'User not found' });
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 });
 
 router.post('/login', async (req, res) => {

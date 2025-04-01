@@ -1,32 +1,34 @@
 const db = require('./db')
 const bcrypt = require('bcrypt');
+const Follow = require('./follow');
 
 class User {
-    static async getAll() {
-        return new Promise((resolve, reject) => {
-            db.query('SELECT * from users', (err, rows) => {
-                if(err)
-                    reject(err);
-                else
-                    resolve(rows);
-            });
-        });
-    }
-
     static async getById(id) {
         if (!id) {
             throw new Error('id is required');
         }
 
-        return new Promise((resolve, reject) => {
-            db.execute('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
-                if(err)
-                    reject(err);
-                else
-                    resolve(rows[0]);
-            });
-        });
-    }
+		return new Promise((resolve, reject) => {
+			db.execute('SELECT id, username, displayname, profile_picture, bio FROM users WHERE id = ?', [id], async (err, rows) => {
+				if(err) return reject(err);
+				if (rows.length === 0) return resolve(null);
+
+				const followerCount = await Follow.getFollowerCount(id);
+				const followingCount = await Follow.getFollowingCount(id);
+
+				const user = {
+					id: rows[0].id,
+					username: rows[0].username,
+					displayname: rows[0].displayname,
+					profilePicture: rows[0].profile_picture,
+					bio: rows[0].bio,
+					followerCount: followerCount,
+					followingCount: followingCount
+				}
+				resolve(user);
+			});
+		});
+	}
 
     static async getByEmail(email) {
         if (!email) {

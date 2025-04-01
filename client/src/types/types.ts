@@ -7,6 +7,12 @@ interface User {
 	profilePicture: string;
 }
 
+interface ProfileUser extends User {
+	bio: string;
+	followers: number;
+	following: number;
+}
+
 interface Comment {
 	user: {
 		username: string;
