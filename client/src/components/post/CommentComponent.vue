@@ -5,7 +5,12 @@
 	import ProfilePicture from '../profile/ProfilePictureComponent.vue';
 
 	const props = defineProps<CommentComponentProps>();
-	const { username, profilePicture, content, createdAt } = props.comment;
+	const {
+		user: { profilePicture, username },
+		comment: { content, createdAt },
+	} = props.comment;
+
+	console.log("CommentComponent", props.comment);
 
 	const date = new Date(createdAt);
 	const dateDiff = date.getTime() - Date.now();

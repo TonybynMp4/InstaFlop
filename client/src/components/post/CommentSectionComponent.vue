@@ -28,7 +28,7 @@
 		<div>
 			<p>Commentaires</p>
 			<div class="post_comment_section">
-				<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.id" />
+				<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.comment.id" />
 			</div>
 		</div>
 		<form v-on:submit="onSubmit" class="post_comment_form">

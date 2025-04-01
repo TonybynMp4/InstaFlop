@@ -27,17 +27,10 @@
 		}
 	};
 
-	const addComment = (comment: string) => {
+	const addComment = (commentContent: string) => {
 		if (!props.post) return;
 		if (!authStore.getUser) return;
-
-		props.post.comments.push({
-			id: props.post.comments.length + 1,
-			createdAt: new Date().toISOString(),
-			profilePicture: authStore.getUser.profilePicture,
-			username: authStore.getUser.username,
-			content: comment
-		});
+		console.log('Comment submitted:', commentContent);
 	};
 
 	const sharePost = () => {
