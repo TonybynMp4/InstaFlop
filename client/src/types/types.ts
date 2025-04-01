@@ -4,6 +4,7 @@ interface User {
 	displayname: string;
     email: string;
     role: string;
+	bio: string;
 	profilePicture: string;
 }
 

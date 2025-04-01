@@ -2,30 +2,20 @@ const db = require('./db')
 const bcrypt = require('bcrypt');
 
 class User {
-    static async getAll() {
-        return new Promise((resolve, reject) => {
-            db.query('SELECT * from users', (err, rows) => {
-                if(err)
-                    reject(err);
-                else
-                    resolve(rows);
-            });
-        });
-    }
-
     static async getById(id) {
         if (!id) {
             throw new Error('id is required');
         }
 
-        return new Promise((resolve, reject) => {
-            db.execute('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
-                if(err)
-                    reject(err);
-                else
-                    resolve(rows[0]);
-            });
-        });
+        return {
+			id: id,
+			username: null,
+			displayname: null,
+			email: null,
+			password: null,
+			role: null,
+			profile_picture: null
+		};
     }
 
     static async getByEmail(email) {
