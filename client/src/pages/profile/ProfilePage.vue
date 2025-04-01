@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import useAuthStore from "@/stores/auth-store";
-import ProfilePicture from "@/components/profile/ProfilePictureComponent.vue";
+	import { ref, computed } from "vue";
+	import useAuthStore from "@/stores/auth-store";
+	import ProfilePicture from "@/components/profile/ProfilePictureComponent.vue";
+import { BookText, GalleryHorizontalEnd, Settings } from "lucide-vue-next";
 
-const authStore = useAuthStore();
-const user = computed(() => authStore.getUser);
+	const authStore = useAuthStore();
+	const user = computed(() => authStore.getUser);
 
-const userData = ref({
-	username: user.value?.username ?? "Username",
-	displayname: user.value?.displayname ?? "Display Name",
-	bio: user.value?.bio ?? "Photographer | Traveler | Coffee Enthusiast",
-	profilePicture: user.value?.profilePicture ?? authStore.getUser?.profilePicture,
-	posts: user.value?.posts ?? 0,
-	followers: user.value?.followers ?? 0,
-	following: user.value?.following ?? 0,
-	website: user.value?.website ?? "https://example.com",
-});
+	const userData = ref({
+		username: user.value?.username ?? "Username",
+		displayname: user.value?.displayname ?? "Display Name",
+		bio: user.value?.bio ?? "Photographer | Traveler | Coffee Enthusiast",
+		profilePicture: user.value?.profilePicture ?? authStore.getUser?.profilePicture,
+		posts: user.value?.posts ?? 0,
+		followers: user.value?.followers ?? 0,
+		following: user.value?.following ?? 0,
+		website: user.value?.website ?? "https://example.com",
+	});
 
-const dialogRef = ref<HTMLDialogElement | null>(null);
-const openDialog = () => dialogRef.value?.showModal();
-const closeDialog = () => dialogRef.value?.close();
+	const dialogRef = ref<HTMLDialogElement | null>(null);
+	const openDialog = () => dialogRef.value?.showModal();
+	const closeDialog = () => dialogRef.value?.close();
+
+	const currentTab = ref("gallery");
+	const setTab = (tab: string) => {
+		currentTab.value = tab;
+	};
 </script>
 
 <template>
@@ -34,25 +40,37 @@ const closeDialog = () => dialogRef.value?.close();
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
 					<div class="buttons">
-						<button class="follow-btn" v-if="true">Follow</button>
+						<button class="follow-btn" v-if="false">Follow</button>
 						<!-- v-if TODO: boutons de SON propre profil différent des autres!!! -->
-						<button class="settings-btn" @click="openDialog" v-else>⚙️</button>
+						<button @click="openDialog" v-else><Settings /></button>
 					</div>
 				</div>
-				<p class="profile-info-bottom">
+				<div class="profile-info-bottom">
 					<h2>{{ userData.displayname }}</h2>
 					<div class="stats">
 						<span><strong>{{ userData.posts }}</strong> posts</span>
 						<span><strong>{{ userData.followers }}</strong> followers</span>
 						<span><strong>{{ userData.following }}</strong> following</span>
 					</div>
-				</p>
+				</div>
 				<p class="bio">{{ userData.bio }}</p>
 			</div>
 		</section>
 
-		<section class="gallery">
-			<div class="gallery-item" v-for="n in 6" :key="n"></div>
+		<section>
+			<div class="tabs">
+				<div class="tab" @click="setTab('gallery')" :class="{ active: currentTab === 'gallery' }">
+					<GalleryHorizontalEnd /> Galerie
+				</div>
+				<div class="tab" @click="setTab('feed')" :class="{ active: currentTab === 'feed' }">
+					<BookText /> Feed
+				</div>
+			</div>
+			<div class="gallery">
+				<div v-if="currentTab === 'gallery'" class="gallery-item" v-for="n in 6" :key="n"></div>
+				<div v-if="currentTab === 'feed'" class="feed-item" v-for="n in 6" :key="n">Feed Item {{ n }}</div>
+			</div>
+
 		</section>
 	</main>
 
@@ -63,6 +81,32 @@ const closeDialog = () => dialogRef.value?.close();
 </template>
 
 <style scoped>
+
+.tabs {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 1rem;
+	width: 100%;
+	padding: 0.25rem;
+	background-color: #e0e0e0;
+}
+.tab {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	cursor: pointer;
+	padding: 0.5rem;
+	width: 50%;
+	border-radius: 5px;
+}
+
+.tabs .active {
+	background-color: #fff;
+	border: 1px solid #a5a5a5;
+}
+
 .profile-info-top {
 	display: flex;
 	gap: 1rem;
@@ -101,18 +145,13 @@ const closeDialog = () => dialogRef.value?.close();
 	justify-content: flex-start;
 	gap: 1rem;
 }
-
-.follow-btn .settings-btn {
-	padding: 8px 15px;
-	margin: 5px;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
 .follow-btn {
 	background-color: #e1306c;
 	color: white;
+}
+
+.follow-btn:hover {
+	background-color: #c6286b;
 }
 
 .message-btn {
