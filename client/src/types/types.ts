@@ -7,7 +7,7 @@ interface User {
 	profilePicture: string;
 }
 
-interface ProfileUser extends User {
+interface UserProfile extends User {
 	bio: string;
 	followers: number;
 	following: number;
@@ -30,5 +30,6 @@ interface Comment {
 
 export type {
     User,
+	UserProfile,
 	Comment
 }

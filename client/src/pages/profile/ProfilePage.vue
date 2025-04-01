@@ -1,22 +1,14 @@
 <script setup lang="ts">
-	import { ref, computed } from "vue";
+	import { ref } from "vue";
 	import useAuthStore from "@/stores/auth-store";
 	import ProfilePicture from "@/components/profile/ProfilePictureComponent.vue";
-import { BookText, GalleryHorizontalEnd, Settings } from "lucide-vue-next";
+	import { BookText, GalleryHorizontalEnd, Settings } from "lucide-vue-next";
+	import type { UserProfile } from "@/types/types";
+	import type { PostComponentProps } from "@/types/components";
 
 	const authStore = useAuthStore();
-	const user = computed(() => authStore.getUser);
-
-	const userData = ref({
-		username: user.value?.username ?? "Username",
-		displayname: user.value?.displayname ?? "Display Name",
-		bio: user.value?.bio ?? "Photographer | Traveler | Coffee Enthusiast",
-		profilePicture: user.value?.profilePicture ?? authStore.getUser?.profilePicture,
-		posts: user.value?.posts ?? 0,
-		followers: user.value?.followers ?? 0,
-		following: user.value?.following ?? 0,
-		website: user.value?.website ?? "https://example.com",
-	});
+	const userData = ref<UserProfile | null>(null); // fetch
+	const posts = ref<PostComponentProps[]>([]); // fetch
 
 	const dialogRef = ref<HTMLDialogElement | null>(null);
 	const openDialog = () => dialogRef.value?.showModal();
@@ -76,7 +68,14 @@ import { BookText, GalleryHorizontalEnd, Settings } from "lucide-vue-next";
 
 	<dialog ref="dialogRef" class="settings-dialog">
 		<h2>Profile Settings</h2>
-		<button @click="closeDialog">Close</button>
+		<!--
+			settings:
+				displayname
+				pfp
+				bio
+		-->
+		<button @click="closeDialog">Annuler</button>
+		<button @click="">Enregistrer</button>
 	</dialog>
 </template>
 
