@@ -5,6 +5,7 @@ const { uploadRouter } = require('./uploadthing');
 const router = express.Router();
 router.use('/user', require('./userRouter'));
 router.use('/post', require('./postRouter'));
+router.use('/comment', require('./commentRouter'));
 router.use('/uploadthing', createRouteHandler({router: uploadRouter}));
 
 module.exports = router;

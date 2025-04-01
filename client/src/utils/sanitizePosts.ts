@@ -14,12 +14,6 @@ export default function sanitizePosts(posts: serverPost[]) : PostComponentProps[
 		liked: post.liked,
 		likes: post.likes,
 		createdAt: post.created_at,
-		comments: post.comments.map((comment) => ({
-			id: comment.id,
-			content: comment.comment,
-			username: comment.displayname,
-			profilePicture: comment.profile_picture,
-			createdAt: comment.created_at,
-		})),
+		comments: post.comments
 	}));
 }

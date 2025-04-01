@@ -1,12 +1,4 @@
-type serverComment = {
-	id: number;
-	comment: string;
-	displayname: string;
-	profile_picture: string;
-	post_id: number;
-	user_id: number;
-	created_at: string;
-}
+import type { Comment } from "./types";
 
 type serverMedia = {
 	id: number;
@@ -28,11 +20,10 @@ type serverPost = {
 	liked: boolean;
 	medias: serverMedia[];
 	likes: number;
-	comments: serverComment[];
+	comments: Comment[];
 }
 
 export type {
-	serverComment,
 	serverMedia,
 	serverPost
 }

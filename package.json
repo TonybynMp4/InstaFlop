@@ -12,7 +12,8 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "i:server": "rm -rf node_modules package-lock.json && npm install",
 	"i:client": "rm -rf ./client/node_modules ./client/package-lock.json && npm install --prefix ./client",
-	"i": "npm run i:server && npm run i:client"
+	"i": "npm run i:server && npm run i:client",
+	"bypass:dev": "npm run dev:client && npm run dev:server"
   },
   "keywords": [],
   "author": "",

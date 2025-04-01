@@ -3,45 +3,28 @@
 	import type { CommentComponentProps } from '@/types/components';
 	import Username from '@/components/profile/UsernameComponent.vue';
 	import ProfilePicture from '../profile/ProfilePictureComponent.vue';
+	import getRelativeTime from '@/utils/getRelativeTime';
+	import useAuthStore from '@/stores/auth-store';
+	import { ref } from 'vue';
+	import { CheckIcon, CircleOff } from 'lucide-vue-next';
 
 	const props = defineProps<CommentComponentProps>();
-	const { username, profilePicture, content, createdAt } = props.comment;
+	const {
+		user: { profilePicture, username },
+		comment: { userId, content, createdAt },
+	} = props.comment;
 
-	const date = new Date(createdAt);
-	const dateDiff = date.getTime() - Date.now();
-	if (isNaN(dateDiff)) {
-		throw new Error("Date invalide: " + createdAt);
-	} else if (dateDiff > 0) {
-		throw new Error("Tu viens du futur mon reuf?");
-	}
+	const timeAgo = getRelativeTime(createdAt);
+	const authStore = useAuthStore();
 
-	const MINUTE = 60 * 1000;
-	const HOUR = 60 * MINUTE;
-	const DAY = 24 * HOUR;
-	const WEEK = 7 * DAY;
-	const MONTH = 30 * DAY;
-	let value: number;
-	let unit: Intl.RelativeTimeFormatUnit;
-
-	// si ça fais moins de [unitée] alors on l'utilise
-	if (Math.abs(dateDiff) < HOUR) {
-		value = Math.ceil(dateDiff / MINUTE) - 1; // minimum il y a 1 minute (sinon ça affiche "Cette minute-ci, Chelou..")
-		unit = "minute";
-	} else if (Math.abs(dateDiff) < DAY) {
-		value = Math.round(dateDiff / HOUR);
-		unit = "hour";
-	} else if (Math.abs(dateDiff) < WEEK) {
-		value = Math.round(dateDiff / DAY);
-		unit = "day";
-	} else if (Math.abs(dateDiff) < MONTH) {
-		value = Math.round(dateDiff / WEEK);
-		unit = "week";
-	} else {
-		value = Math.round(dateDiff / MONTH);
-		unit = "month";
-	}
-
-	const timeAgo = new Intl.RelativeTimeFormat("fr", { numeric: "auto" }).format(value, unit);
+	const isEditing = ref(false);
+	const setIsEditing = () => isEditing.value = !isEditing.value;
+	const editComment = (newContent: string) => {
+		if (!props.comment) return;
+		if (!authStore.getUser) return;
+		console.log('Comment edited:', newContent);
+		setIsEditing();
+	};
 </script>
 
 <template>
@@ -52,14 +35,46 @@
 			<time class="post_comment_time" datetime={createdAt}>{{
 				timeAgo
 			}}</time>
+			<button class="comment_action" :disabled="isEditing" v-if="userId === authStore.getUser?.id" @click="setIsEditing">Modifier</button>
 		</span>
-		<p>
+		<p v-if="!isEditing">
 			{{ content }}
 		</p>
+		<div v-if="isEditing" class="post_comment_edit">
+			<textarea v-model="content" />
+			<div class="post_comment_edit_actions">
+				<CircleOff class="comment_action destructive" @click="setIsEditing" />
+				<CheckIcon class="comment_action" @click="editComment(content)" />
+			</div>
+		</div>
 	</article>
 </template>
 
 <style scoped>
+	.post_comment_edit {
+		display: flex;
+		margin-top: 0.25rem;
+		gap: 1ch;
+		align-items: center;
+	}
+
+	.post_comment_edit textarea {
+		width: 100%;
+		background-color: white;
+		border: 1px solid #a5a5a5;
+		border-radius: 0.25rem;
+		padding: 0.25rem;
+		font-size: small;
+		max-height: 8em;
+		min-height: 2em;
+		resize: vertical;
+	}
+
+	.post_comment_edit_actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
 	.post_comment {
 		display: flex;
 		flex-direction: column;
@@ -85,5 +100,25 @@
 	.post_comment_time {
 		font-size: smaller;
 		color: #888;
+	}
+
+	.comment_action {
+		cursor: pointer;
+		color: black;
+		font-size: smaller;
+		margin-left: auto;
+		padding: 0.25rem;
+		border-radius: 0.25rem;
+		border: 1px solid #a5a5a5;
+	}
+
+	.comment_action:hover {
+		color: white;
+		background-color: black
+	}
+
+	.destructive:hover {
+		color: white;
+		background-color: red
 	}
 </style>

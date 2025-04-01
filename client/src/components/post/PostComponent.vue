@@ -27,17 +27,10 @@
 		}
 	};
 
-	const addComment = (comment: string) => {
+	const addComment = (commentContent: string) => {
 		if (!props.post) return;
 		if (!authStore.getUser) return;
-
-		props.post.comments.push({
-			id: props.post.comments.length + 1,
-			createdAt: new Date().toISOString(),
-			profilePicture: authStore.getUser.profilePicture,
-			username: authStore.getUser.username,
-			content: comment
-		});
+		console.log('Comment submitted:', commentContent);
 	};
 
 	const sharePost = () => {
@@ -81,6 +74,18 @@
 </template>
 
 <style scoped>
+	@media (max-width: 1200px) {
+		.post {
+			flex-direction: column;
+			width: 100%;
+			max-height: unset !important;
+		}
+
+		.post_main, .post_aside, .post_image {
+			width: 100%!important;
+		}
+	}
+
 	.post {
 		display: flex;
 		gap: 1rem;
@@ -129,6 +134,7 @@
 	}
 
 	.post_aside {
+		border-left: 1px solid #a5a5a5;
 		width: 30%;
 	}
 
