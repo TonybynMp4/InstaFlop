@@ -38,7 +38,7 @@ class Comment {
 								id: row.id,
 								postId: row.post_id,
 								userId: row.user_id,
-								content: row.content,
+								content: row.comment,
 								createdAt: row.created_at,
 							}
 						}
@@ -72,7 +72,7 @@ class Comment {
 								id: row.id,
 								postId: row.post_id,
 								userId: row.user_id,
-								content: row.content,
+								content: row.comment,
 								createdAt: row.created_at,
 							}
 						};
@@ -88,7 +88,7 @@ class Comment {
 
 	static async create({ content, postId, user_id }) {
 		return new Promise((resolve, reject) => {
-			db.execute('INSERT INTO comments (content, post_id, user_id) VALUES (?, ?, ?)', [content, postId, user_id], async (err, rows) => {
+			db.execute('INSERT INTO comments (comment, post_id, user_id) VALUES (?, ?, ?)', [content, postId, user_id], async (err, rows) => {
 				if (err)
 					reject(err);
 				else
@@ -123,7 +123,7 @@ class Comment {
 			let values = [];
 
 			if (content) {
-				fields.push('content = ?');
+				fields.push('comment = ?');
 				values.push(content);
 			}
 
