@@ -1,7 +1,8 @@
 const db = require('./db');
 const PostMedia = require('./postMedia');
-const { getLiked, getMedias, getLikes } = require('./postUtils');
-const { getByPostId: getComments } = require('./comment');
+const { getMedias } = require('./postUtils');
+const Comment = require('./comment');
+const Like = require('./like');
 
 class Post {
     static async getAll({ withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
@@ -19,9 +20,9 @@ class Post {
                 try {
                     for (let row of rows) {
                         if (withMedia) row.medias = await getMedias(row.id);
-                        if (withLikes) row.likes = await getLikes(row.id);
-                        if (withComments) row.comments = await getComments(row.id);
-						if (withLiked) row.liked = await getLiked(row.id, authUserId);
+                        if (withLikes) row.likes = await Like.getByPostId(row.id);
+                        if (withComments) row.comments = await Comment.getByPostId(row.id);
+						if (withLiked) row.liked = await Like.getIsLiked(row.id, authUserId);
 					}
 
                     resolve(rows);
@@ -58,10 +59,10 @@ class Post {
                 try {
                     for (let row of rows) {
                         if (withMedia) row.medias = await getMedias(row.id);
-                        if (withLikes) row.likes = await getLikes(row.id);
-                        if (withComments) row.comments = await getComments(row.id);
+                        if (withLikes) row.likes = await Like.getByPostId(row.id);
+                        if (withComments) row.comments = await Comment.getByPostId(row.id);
 						if (withLiked) {
-							row.liked = await getLiked(row.id, authUserId);
+							row.liked = await Like.getIsLiked(row.id, authUserId);
 						}
                     }
 
@@ -89,9 +90,9 @@ class Post {
                         if (rows.length === 0) return resolve(null);
                         let post = rows[0];
                         if (withMedia) post.medias = await getMedias(post.id);
-                        if (withComments) post.comments = await getComments(post.id);
-                        if (withLikes) post.likes = await getLikes(post.id);
-						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
+                        if (withComments) post.comments = await Comment.getByPostId(post.id);
+                        if (withLikes) post.likes = await Like.getByPostId(post.id);
+						if (withLiked && authUserId) post.liked = await Like.getIsLiked(post.id, authUserId);
 
                         resolve(post);
                     } catch (error) {
@@ -118,9 +119,9 @@ class Post {
 						let post = rows[0];
 
 						if (withMedia) post.medias = await getMedias(post.id);
-						if (withComments) post.comments = await getComments(post.id);
-						if (withLikes) post.likes = await getLikes(post.id);
-						if (withLiked && authUserId) post.liked = await getLiked(post.id, authUserId);
+						if (withComments) post.comments = await Comment.getByPostId(post.id);
+						if (withLikes) post.likes = await Like.getByPostId(post.id);
+						if (withLiked && authUserId) post.liked = await Like.getIsLiked(post.id, authUserId);
 
 						resolve(post);
 					} catch (error) {
@@ -195,12 +196,7 @@ class Post {
                     if (rows.affectedRows === 0)
                         reject(new Error('post not found'));
                     else
-                        db.execute('SELECT * FROM posts WHERE id = ?', [id], (err, rows) => {
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(rows[0]);
-                        });
+                        resolve(this.getById(id, {}));
                 }
             });
         });

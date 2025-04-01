@@ -4,19 +4,6 @@ const Comment = require('../models/comment');
 const router = require('express').Router();
 
 // public API
-router.get('/getComment/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const comment = await Comment.getById(id);
-        if (comment)
-            res.status(200).json(comment);
-        else
-            res.status(404).json({ message: 'Comment not found' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 router.get('/getPostComments/:postId', async (req, res) => {
     const { postId } = req.params;
     try {
@@ -45,8 +32,8 @@ router.post('/', async (req, res) => {
 	}
 
     try {
-        const post = await Comment.create({ content, postId, user_id });
-        res.status(201).json(post);
+        const comment = await Comment.create({ content, postId, user_id });
+        res.status(201).json({ comment });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

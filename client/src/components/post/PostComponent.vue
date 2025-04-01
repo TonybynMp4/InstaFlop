@@ -5,32 +5,32 @@
 	import { EllipsisVertical, Heart, Share } from 'lucide-vue-next';
 	import { ref } from 'vue';
 	import CommentSection from './CommentSectionComponent.vue';
-	import useAuthStore from '@/stores/auth-store';
-	const authStore = useAuthStore();
 
 	const props = defineProps<{
 		post: PostComponentProps;
 	}>();
+	const emit = defineEmits(['likePost', 'dislikePost', 'submitComment']);
 
 	const playLikeAnimation = ref(false);
-	const likePost = () => {
+	function likePost() {
 		const post = props.post;
 		if (!post) return;
 		post.liked = !post.liked;
-		post.likes += post.liked ? 1 : -1;
 
 		if (post.liked) {
+			emit('likePost', post.id);
 			playLikeAnimation.value = true;
 			setTimeout(() => {
 				playLikeAnimation.value = false;
 			}, 500);
+		} else {
+			emit('dislikePost', post.id);
 		}
 	};
 
-	const addComment = (commentContent: string) => {
+	const addComment = (comment: string) => {
 		if (!props.post) return;
-		if (!authStore.getUser) return;
-		console.log('Comment submitted:', commentContent);
+		emit('submitComment', props.post.id, comment);
 	};
 
 	const sharePost = () => {
@@ -59,7 +59,7 @@
 					</div>
 					<div class="post_actions">
 						<div class="post_like">
-							<Heart class="post_action" :class="{ 'liked': props.post.liked }" @click="likePost()" />
+							<Heart class="post_action" :class="{ 'liked': props.post.liked }" @click="likePost" />
 							<span>{{ props.post.likes }}</span>
 						</div>
 						<Share class="post_action" @click="sharePost()"/>

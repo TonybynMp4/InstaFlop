@@ -6,6 +6,7 @@
 	import { onMounted, reactive } from 'vue';
 	import sanitizePosts from '@/utils/sanitizePosts';
 	import baseURL from '@/baseUrl';
+	import { createComment, dislikePost, likePost } from '@/utils/postUtils';
 
 	const posts = reactive<PostComponentProps[]>([]);
 	type getFeedResponse = serverPost[] | { error: string };
@@ -32,13 +33,52 @@
 		posts.unshift(sanitizePosts([post])[0]);
 	};
 
+	async function handleEmitLikePost(postId: number) {
+		const liked = await likePost(postId);
+		const post = posts.find((post) => post.id === postId);
+
+		if (!post) return;
+
+		if (liked) {
+			post.liked = true;
+			post.likes += 1;
+		}
+	}
+
+	async function handleEmitDislikePost(postId: number) {
+		const disliked = await dislikePost(postId);
+		const post = posts.find((post) => post.id === postId);
+
+		if (!post) return;
+
+		if (disliked) {
+			post.liked = false;
+			post.likes -= 1;
+		}
+	}
+
+	async function addComment(postId: number, comment: string) {
+		const post = posts.find((post) => post.id === postId);
+		if (!post) return;
+		const newComment = await createComment(postId, comment);
+		if (newComment) {
+			post.comments.push(newComment);
+		}
+	}
 </script>
 
 <template>
 	<main class="flex flex-col gap-4 items-center">
 		<section id="feed">
 			<PostComposer @postPublished="addPost" />
-			<PostComponent v-for="post in posts" :key="post.id" :post="post"/>
+			<PostComponent
+				v-for="post in posts"
+				:key="post.id"
+				@likePost="handleEmitLikePost"
+				@dislikePost="handleEmitDislikePost"
+				@submitComment="addComment"
+				:post="post"
+				/>
 		</section>
 	</main>
 </template>
