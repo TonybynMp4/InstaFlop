@@ -15,7 +15,6 @@ const useAuthStore = defineStore('auth', () => {
 			displayname: newUser.displayname,
 			email: newUser.email,
 			role: newUser.role,
-			bio: newUser.bio,
 			profilePicture: newUser.profilePicture
 		};
 
