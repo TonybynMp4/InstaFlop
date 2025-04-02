@@ -3,7 +3,7 @@
 	import type { PostComponentProps } from "@/types/components";
 	import PostGalleryComponent from "@/components/post/PostGalleryComponent.vue";
 	import baseURL from "@/baseUrl";
-import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
+	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
 
 	const posts = ref<PostComponentProps[]>([]);
 

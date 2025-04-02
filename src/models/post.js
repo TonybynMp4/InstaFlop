@@ -29,6 +29,7 @@ class Post {
 				FROM posts AS post
 				LEFT JOIN users AS user
 				ON post.user_id = user.id
+				ORDER BY post.created_at DESC
 			`;
             db.query(query, async (err, rows) => {
                 if (err) {
