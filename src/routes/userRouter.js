@@ -7,15 +7,15 @@ const validationResult = require('../middlewares/validationResult');
 const auth = require('../middlewares/auth');
 
 // public API
-router.get('/getProfile/:id', async (req, res) => {
-	const userId = req.params.id;
-	if (!userId) {
-		res.status(400).json({ error: 'User ID is required' });
+router.get('/getProfile/:username', async (req, res) => {
+	const username = req.params.username;
+	if (!username) {
+		res.status(400).json({ error: 'Username is required' });
 		return;
 	}
 
 	try {
-		const userProfile = await User.getProfileById(userId);
+		const userProfile = await User.getProfileByUsername(username);
 		if (userProfile)
 			res.status(200).json({userProfile});
 		else

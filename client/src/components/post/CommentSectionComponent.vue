@@ -69,6 +69,7 @@
 		height: auto;
 		overflow-y: auto;
 		max-height: 20rem;
+		border-top: 1px solid #a5a5a5;
 	}
 
 	.post_comment_form {

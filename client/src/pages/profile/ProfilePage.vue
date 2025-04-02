@@ -1,16 +1,41 @@
 <script setup lang="ts">
-	import { ref } from "vue";
+	import { ref, onBeforeMount, useTemplateRef } from "vue";
 	import useAuthStore from "@/stores/auth-store";
 	import ProfilePicture from "@/components/profile/ProfilePictureComponent.vue";
 	import { BookText, GalleryHorizontalEnd, Settings } from "lucide-vue-next";
 	import type { UserProfile } from "@/types/types";
 	import type { PostComponentProps } from "@/types/components";
+	import { useRoute, useRouter } from "vue-router";
+	import { fetchUserProfile, fetchUserPosts } from "@/utils/profileUtils";
+	import PostGalleryComponent from "@/components/post/PostGalleryComponent.vue";
+	import PostComponent from "@/components/post/PostComponent.vue";
+	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitLikePost } from "@/utils/postUtils";
+	import { watch } from "vue";
+	const router = useRouter();
+	const Route = useRoute();
+	let profileId = Route.params.id as string | null;
+
+	watch(() => Route.params.id, (newId) => {
+		profileId = newId as string | null;
+		fetchData();
+	});
 
 	const authStore = useAuthStore();
-	const userData = ref<UserProfile | null>(null); // fetch
-	const posts = ref<PostComponentProps[]>([]); // fetch
+	const userData = ref<UserProfile>({} as UserProfile);
+	const posts = ref<PostComponentProps[]>([]);
 
-	const dialogRef = ref<HTMLDialogElement | null>(null);
+	async function fetchData() {
+		const username = profileId ?? authStore.getUser?.username ?? null;
+		if (!username) {
+			return router.push("/notfound");
+		}
+		userData.value = await fetchUserProfile(username);
+		posts.value = await fetchUserPosts(username);
+	}
+
+	onBeforeMount(fetchData);
+
+	const dialogRef = useTemplateRef<HTMLDialogElement>("dialogRef");
 	const openDialog = () => dialogRef.value?.showModal();
 	const closeDialog = () => dialogRef.value?.close();
 
@@ -21,26 +46,24 @@
 </script>
 
 <template>
-	<main class="profile-container">
+	<main>
 		<section class="profile-header">
-			<ProfilePicture
-				class="profile-picture"
-				:src="userData.profilePicture"
-				:fallback="userData.username"
-			/>
+			<ProfilePicture class="profile-picture" :src="userData?.profilePicture" :fallback="userData.username ?? '?'" />
 			<div class="profile-info">
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
 					<div class="buttons">
-						<button class="follow-btn" v-if="false">Follow</button>
-						<!-- v-if TODO: boutons de SON propre profil différent des autres!!! -->
-						<button @click="openDialog" v-else><Settings /></button>
+						<button class="follow-btn"
+							v-if="profileId && authStore.getUser?.username !== profileId">Follow</button>
+						<button @click="openDialog" v-else>
+							<Settings />
+						</button>
 					</div>
 				</div>
 				<div class="profile-info-bottom">
 					<h2>{{ userData.displayname }}</h2>
 					<div class="stats">
-						<span><strong>{{ userData.posts }}</strong> posts</span>
+						<span><strong>{{ posts.length }}</strong> posts</span>
 						<span><strong>{{ userData.followers }}</strong> followers</span>
 						<span><strong>{{ userData.following }}</strong> following</span>
 					</div>
@@ -49,20 +72,28 @@
 			</div>
 		</section>
 
-		<section>
-			<div class="tabs">
-				<div class="tab" @click="setTab('gallery')" :class="{ active: currentTab === 'gallery' }">
-					<GalleryHorizontalEnd /> Galerie
-				</div>
-				<div class="tab" @click="setTab('feed')" :class="{ active: currentTab === 'feed' }">
-					<BookText /> Feed
-				</div>
+		<section class="tabs">
+			<div class="tab" @click="setTab('gallery')" :class="{ active: currentTab === 'gallery' }">
+				<GalleryHorizontalEnd /> Galerie
 			</div>
-			<div class="gallery">
-				<div v-if="currentTab === 'gallery'" class="gallery-item" v-for="n in 6" :key="n"></div>
-				<div v-if="currentTab === 'feed'" class="feed-item" v-for="n in 6" :key="n">Feed Item {{ n }}</div>
+			<div class="tab" @click="setTab('feed')" :class="{ active: currentTab === 'feed' }">
+				<BookText /> Feed
 			</div>
-
+		</section>
+		<PostGalleryComponent v-if="currentTab === 'gallery' && posts.length > 0" :posts="posts.filter(post => post.images.length > 0)" />
+		<section v-else-if="currentTab === 'feed' && posts.length > 0" class="feed">
+			<PostComponent
+				v-for="post in posts"
+				:key="post.id"
+				@likePost="(postId) => handleEmitLikePost(posts, postId)"
+				@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
+				@editComment="(data) => handleEmitEditComment(posts, data)"
+				@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
+				:post="post"
+			/>
+		</section>
+		<section v-else>
+			<p>No posts available.</p>
 		</section>
 	</main>
 
@@ -80,6 +111,12 @@
 </template>
 
 <style scoped>
+.feed {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
 
 .tabs {
 	display: flex;
@@ -90,6 +127,7 @@
 	padding: 0.25rem;
 	background-color: #e0e0e0;
 }
+
 .tab {
 	display: flex;
 	align-items: center;
@@ -113,17 +151,27 @@
 	margin-bottom: 0.5rem;
 }
 
-.profile-container {
-	max-width: 800px;
-	margin: 50px auto;
-	padding: 20px;
-	text-align: center;
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	width: 50%;
+	margin: 2rem auto;
+}
+
+@media (max-width: 1024px) {
+	main {
+		width: 90%;
+	}
 }
 
 .profile-header {
 	display: flex;
 	align-items: center;
-	gap: 20px;
+	justify-content: center;
+	margin: auto;
+	gap: 1rem;
 }
 
 .profile-picture {
@@ -144,6 +192,7 @@
 	justify-content: flex-start;
 	gap: 1rem;
 }
+
 .follow-btn {
 	background-color: #e1306c;
 	color: white;
@@ -153,26 +202,9 @@
 	background-color: #c6286b;
 }
 
-.message-btn {
-	background-color: #f0f0f0;
-}
-
 .stats {
 	display: flex;
 	gap: 1rem;
-}
-
-.gallery {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 10px;
-	margin-top: 20px;
-}
-
-.gallery-item {
-	width: 100%;
-	height: 200px;
-	background: #eee;
 }
 
 .settings-dialog {
@@ -181,4 +213,3 @@
 	text-align: center;
 }
 </style>
-

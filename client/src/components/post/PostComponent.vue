@@ -2,7 +2,7 @@
 	import ProfilePicture from '@/components/profile/ProfilePictureComponent.vue';
 	import Username from '@/components/profile/UsernameComponent.vue';
 	import type { PostComponentProps } from '@/types/components';
-	import { EllipsisVertical, Heart, Share } from 'lucide-vue-next';
+	import { ArrowLeft, ArrowRight, EllipsisVertical, Heart, Share } from 'lucide-vue-next';
 	import { ref } from 'vue';
 	import CommentSection from './CommentSectionComponent.vue';
 
@@ -53,13 +53,18 @@
 		}).catch((error) => console.error('Error sharing:', error));
 	};
 
+	const currentImageIndex = ref(0);
 </script>
 
 <template>
 	<article class="post">
 		<div class="post_main">
 			<div style="position: relative;" v-if="props.post.images && props.post.images.length > 0">
-				<img class="post_image" :src="props.post.images[0]" alt="image" /> <!-- TODO: gallery component -->
+				<img class="post_image" :src="props.post.images[currentImageIndex]" alt="image" />
+				<div class="post_image_arrows" v-if="props.post.images.length > 1">
+					<ArrowLeft @click="currentImageIndex = (currentImageIndex - 1 + props.post.images.length) % props.post.images.length" />
+					<ArrowRight @click="currentImageIndex = (currentImageIndex + 1) % props.post.images.length" />
+				</div>
 				<Heart class="heartBurst toggleHeartBurst" v-if="playLikeAnimation" />
 			</div>
 			<div class="post_details">
@@ -85,6 +90,23 @@
 </template>
 
 <style scoped>
+	.post_image_arrows {
+		position: absolute;
+		display: flex;
+		justify-content: space-between;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
+		padding-inline: 0.5rem;
+	}
+
+	.post_image_arrows svg {
+		cursor: pointer;
+		width: 2rem;
+		height: 2rem;
+		color: #fff;
+	}
+
 	@media (max-width: 1200px) {
 		.post {
 			flex-direction: column;
@@ -105,6 +127,8 @@
 		border-radius: 1rem;
 		width: 100%;
 		max-height: 50rem;
+		background-color: white;
+		color: black;
 	}
 
 	.post_like {
@@ -145,7 +169,6 @@
 	}
 
 	.post_aside {
-		border-left: 1px solid #a5a5a5;
 		width: 30%;
 	}
 

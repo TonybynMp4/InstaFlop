@@ -35,6 +35,11 @@ const router = createRouter({
 			path: '/post/:id',
 			component: () => import('@/pages/post/PostPage.vue'),
 		},
+		{
+
+			path: '/notfound',
+			component: () => import('@/pages/NotFoundPage.vue'),
+		},
         {
             path: '/:pathMatch(.*)',
             component: () => import('@/pages/NotFoundPage.vue')

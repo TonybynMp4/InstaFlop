@@ -6,7 +6,7 @@
 	import getRelativeTime from '@/utils/getRelativeTime';
 	import useAuthStore from '@/stores/auth-store';
 	import { ref } from 'vue';
-	import { CheckIcon, CircleOff } from 'lucide-vue-next';
+	import { CheckIcon, CircleOff, EditIcon, TrashIcon } from 'lucide-vue-next';
 
 	const props = defineProps<CommentComponentProps>();
 	const emit = defineEmits(['editComment']);
@@ -70,8 +70,8 @@
 				timeAgo
 			}}</time>
 			<div class="comment_actions">
-				<button class="comment_action" :disabled="isEditing" v-if="userId === authStore.getUser?.id" @click="setIsEditing">Modifier</button>
-				<button class="comment_action destructive" v-if="userId === authStore.getUser?.id" @click="deleteComment">Supprimer</button>
+				<button class="comment_action" :disabled="isEditing" v-if="userId === authStore.getUser?.id" @click="setIsEditing"><EditIcon/></button>
+				<button class="comment_action destructive" v-if="userId === authStore.getUser?.id" @click="deleteComment"><TrashIcon /></button>
 			</div>
 		</span>
 		<p v-if="!isEditing">
@@ -154,6 +154,12 @@
 		border-radius: 0.25rem;
 		border: 1px solid #a5a5a5;
 	}
+
+	.comment_action svg{
+		height: 0.75rem;
+		width: 0.75rem;
+	}
+
 
 	.comment_action:hover {
 		color: white;
