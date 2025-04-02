@@ -76,6 +76,21 @@ import baseURL from "@/baseUrl";
 
 	async function followUser() {
 		if (!profileId) return;
+
+		if (!authStore.getUser) {
+			alert("You must be logged in to follow a user.");
+			return;
+		}
+
+		if (userData.value.username === authStore.getUser?.username) {
+			alert("You cannot follow yourself.");
+			return;
+		}
+
+		if (userData.value.isFollowing) {
+			if (!confirm("Are you sure you want to unfollow this user?")) return;
+		}
+
 		const result: {
 			followed: boolean;
 			unfollowed: boolean;
@@ -113,11 +128,11 @@ import baseURL from "@/baseUrl";
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
 					<div class="buttons">
-						<button class="follow-btn" :class="{ 'followed': userData.isFollowing }"
+						<button class="follow-btn" :class="{ 'followed': authStore.getUser && userData.isFollowing }"
 							v-if="profileId && authStore.getUser?.username !== profileId"
 							@click="followUser"
 						>
-							{{ userData.isFollowing ? 'Unfollow' : 'Follow' }}
+							{{ authStore.getUser && userData.isFollowing ? 'Unfollow' : 'Follow' }}
 						</button>
 						<button @click="openDialog" v-else>
 							<Settings />
