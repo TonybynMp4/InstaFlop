@@ -25,6 +25,37 @@
 			console.error('Error fetching posts:', error);
 		});
 	});
+
+	async function editPost(postId: number, newContent: string) {
+		const result = await handleEmitEditPost(posts, postId, newContent);
+		console.log('result', result);
+		if (result) {
+			const postIndex = posts.findIndex((post) => post.id === postId);
+			if (postIndex !== -1) {
+				posts[postIndex].content = newContent;
+			}
+		} else {
+			alert('Error editing post. Please try again later.');
+		}
+	}
+
+	async function editComment(data: { commentId: number; newContent: string, postId: number }) {
+		const result = await handleEmitEditComment(posts, data);
+		if (result) {
+			const postIndex = posts.findIndex((post) => post.id === data.postId);
+			if (postIndex !== -1) {
+				const commentIndex = posts[postIndex].comments.findIndex((comment) => comment.comment.id === data.commentId);
+				if (commentIndex !== -1) {
+					posts[postIndex].comments[commentIndex] = result;
+					// marche pas alors que ça devrais, flemme de chercher + il est 6h
+				} else {
+					alert('Comment not found.');
+				}
+			}
+		} else {
+			alert('Error editing comment. Please try again later.');
+		}
+	}
 </script>
 
 <template>
@@ -36,9 +67,9 @@
 				:key="post.id"
 				@likePost="(postId) => handleEmitLikePost(posts, postId)"
 				@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
-				@editComment="(data) => handleEmitEditComment(posts, data)"
+				@editComment="editComment"
 				@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
-				@editPost="(postId, newContent) => handleEmitEditPost(posts, postId, newContent)"
+				@editPost="editPost"
 				:post="post"
 				/>
 		</section>

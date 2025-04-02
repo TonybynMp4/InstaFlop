@@ -36,6 +36,10 @@ const router = createRouter({
 			component: () => import('@/pages/post/PostPage.vue'),
 		},
 		{
+			path: '/discover',
+			component: () => import('@/pages/discover/DiscoverPage.vue'),
+		},
+		{
 
 			path: '/notfound',
 			component: () => import('@/pages/NotFoundPage.vue'),

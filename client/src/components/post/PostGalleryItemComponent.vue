@@ -14,7 +14,7 @@
 
 <style scoped>
 	.gallery_item {
-		width: 25%;
+		width: 24%;
 		aspect-ratio: 1;
 		cursor: pointer;
 	}

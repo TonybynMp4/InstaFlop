@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { computed } from 'vue';
     import useAuthStore from './stores/auth-store';
-	import { HomeIcon, LogInIcon, LogOutIcon, UserPlus2 } from 'lucide-vue-next';
+	import { HomeIcon, LogInIcon, LogOutIcon, SearchIcon, UserPlus2 } from 'lucide-vue-next';
 	import ProfilePictureComponent from './components/profile/ProfilePictureComponent.vue';
     const authStore = useAuthStore();
     const isLoggedIn = computed(() => authStore.getUser !== null);
@@ -25,6 +25,9 @@
             </li>
             <li v-if="isLoggedIn">
                 <router-link class="action-btn" to="/home"><HomeIcon /></router-link>
+            </li>
+			<li v-if="isLoggedIn">
+                <router-link class="action-btn" to="/discover"><SearchIcon /></router-link>
             </li>
             <li v-if="isLoggedIn">
 				<router-link class="action-btn" to="/profile">

@@ -43,12 +43,42 @@
 	const setTab = (tab: string) => {
 		currentTab.value = tab;
 	};
+
+	async function editPost(postId: number, newContent: string) {
+		const result = await handleEmitEditPost(posts.value, postId, newContent);
+		if (result) {
+			const postIndex = posts.value.findIndex((post) => post.id === postId);
+			if (postIndex !== -1) {
+				posts.value[postIndex].content = newContent;
+			}
+		} else {
+			alert('Error editing post. Please try again later.');
+		}
+	}
+
+	async function editComment(data: { commentId: number; newContent: string, postId: number }) {
+		const result = await handleEmitEditComment(posts.value, data);
+		if (result) {
+			const postIndex = posts.value.findIndex((post) => post.id === data.postId);
+			if (postIndex !== -1) {
+				const commentIndex = posts.value[postIndex].comments.findIndex((comment) => comment.comment.id === data.commentId);
+				if (commentIndex !== -1) {
+					posts.value[postIndex].comments[commentIndex] = result;
+					// marche pas alors que ça devrais, flemme de chercher + il est 6h
+				} else {
+					alert('Comment not found.');
+				}
+			}
+		} else {
+			alert('Error editing comment. Please try again later.');
+		}
+	}
 </script>
 
 <template>
 	<main>
 		<section class="profile-header">
-			<ProfilePicture class="profile-picture" :src="userData?.profilePicture" :fallback="userData.username ?? '?'" />
+			<ProfilePicture class="profile-picture" :src="userData.profilePicture" :fallback="userData.username" />
 			<div class="profile-info">
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
@@ -80,7 +110,14 @@
 				<BookText /> Feed
 			</div>
 		</section>
-		<PostGalleryComponent v-if="currentTab === 'gallery' && posts.length > 0" :posts="posts.filter(post => post.images.length > 0)" />
+		<PostGalleryComponent
+			v-if="currentTab === 'gallery' && posts.length > 0" :posts="posts.filter(post => post.images.length > 0)"
+			@likePost="(postId) => handleEmitLikePost(posts, postId)"
+			@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
+			@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
+			@editComment="editComment"
+			@editPost="editPost"
+		/>
 		<section v-else-if="currentTab === 'feed' && posts.length > 0" class="feed">
 			<PostComponent
 				v-for="post in posts"

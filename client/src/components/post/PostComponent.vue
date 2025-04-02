@@ -5,7 +5,7 @@
 	import { ArrowLeft, ArrowRight, EditIcon, Heart, Share } from 'lucide-vue-next';
 	import { ref } from 'vue';
 	import CommentSection from './CommentSectionComponent.vue';
-import useAuthStore from '@/stores/auth-store';
+	import useAuthStore from '@/stores/auth-store';
 
 	const props = defineProps<{
 		post: PostComponentProps;
@@ -80,7 +80,7 @@ import useAuthStore from '@/stores/auth-store';
 			return;
 		}
 
-		emit('editPost', props.post.id, props.post.content);
+		emit('editPost', props.post.id, newContent);
 		isEditing.value = false;
 	};
 </script>

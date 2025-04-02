@@ -1,10 +1,9 @@
 import baseURL from "@/baseUrl";
+import router from "@/router";
 import useAuthStore from "@/stores/auth-store";
 import type { PostComponentProps } from "@/types/components";
 import type { Comment } from "@/types/types";
-import { useRouter } from "vue-router";
 const authStore = useAuthStore();
-const router = useRouter();
 
 async function likePost(postId: number) {
 	if (!postId) return;
@@ -234,7 +233,7 @@ async function handleEmitEditComment(posts: PostComponentProps[], {
 	const comment = post.comments.find((comment) => comment.comment.id === commentId);
 	if (!comment) return;
 
-	comment.comment.content = newComment.comment.content;
+	return newComment;
 }
 
 async function handleEmitEditPost(posts: PostComponentProps[], postId: number, newContent: string) {
@@ -265,7 +264,7 @@ async function handleEmitEditPost(posts: PostComponentProps[], postId: number, n
 		return null;
 	}
 
-	post.content = newContent;
+	return APIResponse.post;
 }
 
 export {
