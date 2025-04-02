@@ -103,10 +103,7 @@ class Comment {
 				if (err)
 					reject(err);
 				else {
-					if (rows.affectedRows === 0)
-						reject(new Error('comment not found'));
-					else
-						resolve({ message: 'comment deleted' });
+					resolve(rows.affectedRows !== 0);
 				}
 			});
 		});

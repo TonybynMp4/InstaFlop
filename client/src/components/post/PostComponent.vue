@@ -9,7 +9,7 @@
 	const props = defineProps<{
 		post: PostComponentProps;
 	}>();
-	const emit = defineEmits(['likePost', 'dislikePost', 'submitComment']);
+	const emit = defineEmits(['likePost', 'dislikePost', 'submitComment', 'editComment']);
 
 	const playLikeAnimation = ref(false);
 	function likePost() {
@@ -31,6 +31,17 @@
 	const addComment = (comment: string) => {
 		if (!props.post) return;
 		emit('submitComment', props.post.id, comment);
+	};
+
+	const editComment = ({
+		commentId,
+		newContent,
+	}: {
+		commentId: number;
+		newContent: string;
+	}) => {
+		if (!props.post) return;
+		emit('editComment', { commentId, newContent, postId: props.post.id });
 	};
 
 	const sharePost = () => {
@@ -69,7 +80,7 @@
 				<p>{{ props.post.content }}</p>
 			</div>
 		</div>
-		<CommentSection :comments="props.post.comments" @submitComment="addComment" />
+		<CommentSection :comments="props.post.comments" @submitComment="addComment" @editComment="editComment" />
 	</article>
 </template>
 

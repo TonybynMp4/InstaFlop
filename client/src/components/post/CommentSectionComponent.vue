@@ -7,7 +7,7 @@
 		comments: Comment[];
 	}>();
 
-	const emit = defineEmits(['submitComment']);
+	const emit = defineEmits(['submitComment', 'editComment']);
 
 	const onSubmit = (event: Event) => {
 		event.preventDefault();
@@ -28,7 +28,12 @@
 		<div>
 			<p>Commentaires</p>
 			<div class="post_comment_section">
-				<CommentComponent v-for="comment in props.comments" :comment="comment" :key="comment.comment.id" />
+				<CommentComponent
+					v-for="comment in props.comments"
+					:comment="comment"
+					:key="comment.comment.id"
+					@editComment="(data) => emit('editComment', data)"
+				/>
 				<p v-if="!props.comments" class="no_comments">Aucun commentaire</p>
 			</div>
 		</div>

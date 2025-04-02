@@ -105,4 +105,70 @@ async function createComment(postId: number, commentContent: string) {
 	return APIResponse.comment;
 };
 
-export { likePost, dislikePost, createComment };
+async function editComment(commentId: number, newContent: string) {
+	if (!authStore.getUser) {
+		router.push('/login');
+		return null;
+	}
+	if (!newContent) return null;
+
+	const APIResponse: {
+		comment: Comment;
+		error?: string;
+	} = await fetch(baseURL+'/api/comment/', {
+		method: 'PUT',
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			commentId: commentId,
+			content: newContent,
+		}),
+	}).then((res) => res.json());
+
+	if (!APIResponse) {
+		alert('Error editing comment. Please try again later.');
+		return null;
+	}
+
+	if ('error' in APIResponse) {
+		console.error(APIResponse.error);
+		alert(APIResponse.error);
+		return null;
+	}
+
+	return APIResponse.comment;
+}
+
+async function deleteComment(commentId: number) {
+	if (!authStore.getUser) {
+		router.push('/login');
+		return null;
+	}
+
+	if (!commentId) return null;
+
+	const APIResponse: {
+		deleted: boolean;
+		error?: string;
+	} = await fetch(baseURL + '/api/comment/' + commentId, {
+		method: 'DELETE',
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' },
+	}).then((res) => res.json());
+
+	if (!APIResponse) {
+		alert('Error deleting comment. Please try again later.');
+		return null;
+	}
+
+	if ('error' in APIResponse) {
+		console.error(APIResponse.error);
+		alert(APIResponse.error);
+		return null;
+	}
+
+	return APIResponse.deleted;
+}
+
+
+export { likePost, dislikePost, createComment, editComment, deleteComment };

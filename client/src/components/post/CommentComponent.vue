@@ -9,6 +9,7 @@
 	import { CheckIcon, CircleOff } from 'lucide-vue-next';
 
 	const props = defineProps<CommentComponentProps>();
+	const emit = defineEmits(['editComment']);
 	const {
 		user: { profilePicture, username },
 		comment: { userId, content, createdAt },
@@ -19,11 +20,44 @@
 
 	const isEditing = ref(false);
 	const setIsEditing = () => isEditing.value = !isEditing.value;
-	const editComment = (newContent: string) => {
+	const editComment = () => {
 		if (!props.comment) return;
 		if (!authStore.getUser) return;
-		console.log('Comment edited:', newContent);
+
+		const newContent = editCommentContent.value.trim();
+
+		if (newContent.length > 200) {
+			alert('Le commentaire ne doit pas dépasser 200 caractères.');
+			return;
+		}
+		if (newContent === content) {
+			setIsEditing();
+			return;
+		}
+
+		if (newContent === '') {
+			alert('Le commentaire ne peut pas être vide.');
+			return;
+		}
+
+		emit('editComment', {
+			commentId: props.comment.comment.id,
+			newContent,
+		});
+
 		setIsEditing();
+	};
+	const editCommentContent = ref(content);
+	const deleteComment = () => {
+		if (!props.comment) return;
+		if (!authStore.getUser) return;
+
+		if (confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+			emit('editComment', {
+				commentId: props.comment.comment.id,
+				newContent: null,
+			});
+		}
 	};
 </script>
 
@@ -35,16 +69,19 @@
 			<time class="post_comment_time" datetime={createdAt}>{{
 				timeAgo
 			}}</time>
-			<button class="comment_action" :disabled="isEditing" v-if="userId === authStore.getUser?.id" @click="setIsEditing">Modifier</button>
+			<div class="comment_actions">
+				<button class="comment_action" :disabled="isEditing" v-if="userId === authStore.getUser?.id" @click="setIsEditing">Modifier</button>
+				<button class="comment_action destructive" v-if="userId === authStore.getUser?.id" @click="deleteComment">Supprimer</button>
+			</div>
 		</span>
 		<p v-if="!isEditing">
 			{{ content }}
 		</p>
 		<div v-if="isEditing" class="post_comment_edit">
-			<textarea v-model="content" />
+			<textarea v-model="editCommentContent" />
 			<div class="post_comment_edit_actions">
 				<CircleOff class="comment_action destructive" @click="setIsEditing" />
-				<CheckIcon class="comment_action" @click="editComment(content)" />
+				<CheckIcon class="comment_action" @click="editComment()" />
 			</div>
 		</div>
 	</article>
@@ -102,6 +139,12 @@
 		color: #888;
 	}
 
+	.comment_actions {
+		display: flex;
+		gap: 0.5rem;
+		margin-left: auto;
+	}
+
 	.comment_action {
 		cursor: pointer;
 		color: black;
@@ -117,8 +160,13 @@
 		background-color: black
 	}
 
+	.destructive {
+		color: white;
+		background-color: red;
+	}
+
 	.destructive:hover {
 		color: white;
-		background-color: red
+		background-color: darkred;
 	}
 </style>

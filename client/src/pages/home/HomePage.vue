@@ -6,7 +6,7 @@
 	import { onMounted, reactive } from 'vue';
 	import sanitizePosts from '@/utils/sanitizePosts';
 	import baseURL from '@/baseUrl';
-	import { createComment, dislikePost, likePost } from '@/utils/postUtils';
+	import { createComment, dislikePost, editComment, likePost, deleteComment } from '@/utils/postUtils';
 
 	const posts = reactive<PostComponentProps[]>([]);
 	type getFeedResponse = serverPost[] | { error: string };
@@ -39,10 +39,10 @@
 
 		if (!post) return;
 
-		if (liked) {
-			post.liked = true;
-			post.likes += 1;
-		}
+		if (!liked) return;
+
+		post.liked = true;
+		post.likes += 1;
 	}
 
 	async function handleEmitDislikePost(postId: number) {
@@ -50,20 +50,49 @@
 		const post = posts.find((post) => post.id === postId);
 
 		if (!post) return;
+		if (!disliked) return;
 
-		if (disliked) {
-			post.liked = false;
-			post.likes -= 1;
-		}
+		post.liked = false;
+		post.likes -= 1;
 	}
 
 	async function addComment(postId: number, comment: string) {
 		const post = posts.find((post) => post.id === postId);
 		if (!post) return;
 		const newComment = await createComment(postId, comment);
-		if (newComment) {
-			post.comments.push(newComment);
+		if (!newComment) return;
+		post.comments.push(newComment);
+	}
+
+	async function handleEmitEditComment({
+		commentId,
+		newContent,
+		postId,
+	}: {
+		commentId: number;
+		newContent: string | null;
+		postId: number;
+	}) {
+		if (!newContent) {
+			const post = posts.find((post) => post.id === postId);
+			if (!post) return;
+			const deleted = await deleteComment(commentId);
+			if (!deleted) return;
+			post.comments = post.comments.filter((comment) => comment.comment.id !== commentId);
+			return;
 		}
+
+		const newComment = await editComment(commentId, newContent);
+		const post = posts.find((post) => post.id === postId);
+
+		if (!post) return;
+		if (!newComment) return;
+
+		const comment = post.comments.find((comment) => comment.comment.id === commentId);
+		if (!comment) return;
+
+		comment.comment.content = newContent;
+
 	}
 </script>
 
@@ -76,6 +105,7 @@
 				:key="post.id"
 				@likePost="handleEmitLikePost"
 				@dislikePost="handleEmitDislikePost"
+				@editComment="handleEmitEditComment"
 				@submitComment="addComment"
 				:post="post"
 				/>
