@@ -87,4 +87,33 @@ router.get('/getFeed', async (req, res) => {
     }
 });
 
+router.put('/', async (req, res) => {
+	const { postId, description } = req.body;
+
+	if (!postId || !description) {
+		res.status(400).json({ error: 'Post id and description are required' });
+		return;
+	}
+
+	const postCheck = await Post.getById(postId, {});
+	if (!postCheck) {
+		res.status(404).json({ error: 'Post not found' });
+		return;
+	}
+
+	const { username } = req.auth;
+	if (!username || username !== postCheck.user.username) {
+		res.status(401).json({ error: 'Unauthorized' });
+		return;
+	}
+
+	try {
+		const updated = await Post.update(postId, { description });
+		res.status(200).json({ post: updated });
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+
 module.exports = router;

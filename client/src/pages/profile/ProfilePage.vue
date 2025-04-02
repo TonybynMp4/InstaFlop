@@ -9,7 +9,7 @@
 	import { fetchUserProfile, fetchUserPosts } from "@/utils/profileUtils";
 	import PostGalleryComponent from "@/components/post/PostGalleryComponent.vue";
 	import PostComponent from "@/components/post/PostComponent.vue";
-	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitLikePost } from "@/utils/postUtils";
+	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
 	import { watch } from "vue";
 	const router = useRouter();
 	const Route = useRoute();
@@ -89,6 +89,7 @@
 				@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
 				@editComment="(data) => handleEmitEditComment(posts, data)"
 				@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
+				@editPost="(postId, newContent) => handleEmitEditPost(posts, postId, newContent)"
 				:post="post"
 			/>
 		</section>

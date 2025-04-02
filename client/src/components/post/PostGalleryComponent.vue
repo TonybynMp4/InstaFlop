@@ -2,7 +2,7 @@
 	import type { PostComponentProps } from '@/types/components';
 	import { ref, useTemplateRef } from 'vue';
 	import PostGalleryItemComponent from './PostGalleryItemComponent.vue';
-	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitLikePost } from '@/utils/postUtils';
+	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from '@/utils/postUtils';
 	import { ExternalLinkIcon, XIcon } from 'lucide-vue-next';
 	import PostComponent from './PostComponent.vue';
 	import router from '@/router';
@@ -52,6 +52,7 @@
 				@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
 				@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
 				@editComment="(data) => handleEmitEditComment(posts, data)"
+				@editPost="(postId, newContent) => handleEmitEditPost(posts, postId, newContent)"
 				/>
 			</div>
 		</dialog>

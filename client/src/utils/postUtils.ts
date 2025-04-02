@@ -234,14 +234,45 @@ async function handleEmitEditComment(posts: PostComponentProps[], {
 	const comment = post.comments.find((comment) => comment.comment.id === commentId);
 	if (!comment) return;
 
-	comment.comment.content = newContent;
+	comment.comment.content = newComment.comment.content;
 }
 
+async function handleEmitEditPost(posts: PostComponentProps[], postId: number, newContent: string) {
+	const post = posts.find((post) => post.id === postId);
+	if (!post || !newContent) return;
+
+	const APIResponse: {
+		post: PostComponentProps;
+		error?: string;
+	} = await fetch(baseURL + '/api/post', {
+		method: 'PUT',
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			postId: postId,
+			description: newContent,
+		}),
+	}).then((res) => res.json());
+
+	if (!APIResponse) {
+		alert('Error editing post. Please try again later.');
+		return null;
+	}
+
+	if ('error' in APIResponse) {
+		console.error(APIResponse.error);
+		alert(APIResponse.error);
+		return null;
+	}
+
+	post.content = newContent;
+}
 
 export {
 	handleAddPost,
 	handleEmitLikePost,
 	handleEmitDislikePost,
 	handleEmitEditComment,
+	handleEmitEditPost,
 	handleAddComment
 }

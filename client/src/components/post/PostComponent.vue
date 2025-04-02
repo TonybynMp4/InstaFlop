@@ -2,14 +2,15 @@
 	import ProfilePicture from '@/components/profile/ProfilePictureComponent.vue';
 	import Username from '@/components/profile/UsernameComponent.vue';
 	import type { PostComponentProps } from '@/types/components';
-	import { ArrowLeft, ArrowRight, EllipsisVertical, Heart, Share } from 'lucide-vue-next';
+	import { ArrowLeft, ArrowRight, EditIcon, Heart, Share } from 'lucide-vue-next';
 	import { ref } from 'vue';
 	import CommentSection from './CommentSectionComponent.vue';
+import useAuthStore from '@/stores/auth-store';
 
 	const props = defineProps<{
 		post: PostComponentProps;
 	}>();
-	const emit = defineEmits(['likePost', 'dislikePost', 'submitComment', 'editComment']);
+	const emit = defineEmits(['likePost', 'dislikePost', 'submitComment', 'editComment', 'editPost']);
 
 	const playLikeAnimation = ref(false);
 	function likePost() {
@@ -54,6 +55,34 @@
 	};
 
 	const currentImageIndex = ref(0);
+
+	const isEditing = ref(false);
+	const setIsEditing = () => isEditing.value = !isEditing.value;
+	const editPostContent = ref(props.post.content);
+	const editPost = () => {
+		if (!props.post) return;
+		const authStore = useAuthStore();
+		if (!authStore.getUser) return;
+
+		const newContent = editPostContent.value.trim();
+
+		if (newContent.length > 255) {
+			alert('Le post ne doit pas dépasser 255 caractères.');
+			return;
+		}
+		if (newContent === props.post.content) {
+			setIsEditing();
+			return;
+		}
+
+		if (newContent === '') {
+			alert('La description ne peut pas être vide.');
+			return;
+		}
+
+		emit('editPost', props.post.id, props.post.content);
+		isEditing.value = false;
+	};
 </script>
 
 <template>
@@ -79,10 +108,14 @@
 							<span>{{ props.post.likes }}</span>
 						</div>
 						<Share class="post_action" @click="sharePost()"/>
-						<EllipsisVertical class="post_action" />
+						<EditIcon class="post_action" v-if="props.post.user.username === props.post.user.username" @click="setIsEditing" />
 					</div>
 				</div>
-				<p>{{ props.post.content }}</p>
+				<p v-if="!isEditing">{{ props.post.content }}</p>
+				<p v-else class="post_edit">
+					<textarea v-model="editPostContent" class="post_comment_edit" placeholder="Edit your post..." rows="3"></textarea>
+					<button @click="editPost">Save</button>
+				</p>
 			</div>
 		</div>
 		<CommentSection :comments="props.post.comments" @submitComment="addComment" @editComment="editComment" />
@@ -90,6 +123,25 @@
 </template>
 
 <style scoped>
+	.post_edit textarea {
+		width: 100%;
+		background-color: white;
+		border: 1px solid #a5a5a5;
+		border-radius: 0.25rem;
+		padding: 0.25rem;
+		font-size: small;
+		max-height: 8em;
+		min-height: 2em;
+		resize: vertical;
+	}
+
+	.post_edit {
+		display: flex;
+		margin-top: 0.25rem;
+		gap: 1ch;
+		align-items: center;
+	}
+
 	.post_image_arrows {
 		position: absolute;
 		display: flex;

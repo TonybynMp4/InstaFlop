@@ -182,19 +182,15 @@ class Post {
         });
     }
 
-    static async update(id, { title, description }) {
-        if (!title && !description) {
+    static async update(id, { description }) {
+        if (!description) {
             throw new Error('At least one field is required');
         }
 
         return new Promise((resolve, reject) => {
-            const query = 'UPDATE posts SET ';
-            const fields = [];
-            const values = [];
-            if (title) {
-                fields.push('title = ?');
-                values.push(title);
-            }
+            let query = 'UPDATE posts SET ';
+            let fields = [];
+            let values = [];
             if (description) {
                 fields.push('description = ?');
                 values.push(description);

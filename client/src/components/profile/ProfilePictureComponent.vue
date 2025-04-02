@@ -4,7 +4,6 @@
 
 	const props = defineProps<ProfilePictureComponent>();
 	const { src, fallback } = props;
-	console.log('src', src);
 </script>
 
 <template>

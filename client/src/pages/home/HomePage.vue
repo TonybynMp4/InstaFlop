@@ -4,7 +4,7 @@
 	import type { PostComponentProps } from '@/types/components';
 	import { onMounted, reactive } from 'vue';
 	import baseURL from '@/baseUrl';
-	import { handleEmitLikePost, handleEmitDislikePost, handleEmitEditComment, handleAddPost, handleAddComment } from '@/utils/postUtils';
+	import { handleEmitLikePost, handleEmitDislikePost, handleEmitEditComment, handleAddPost, handleAddComment, handleEmitEditPost } from '@/utils/postUtils';
 
 	const posts = reactive<PostComponentProps[]>([]);
 	type getFeedResponse = {error: string} | PostComponentProps[];
@@ -38,6 +38,7 @@
 				@dislikePost="(postId) => handleEmitDislikePost(posts, postId)"
 				@editComment="(data) => handleEmitEditComment(posts, data)"
 				@submitComment="(postId, comment) => handleAddComment(posts, postId, comment)"
+				@editPost="(postId, newContent) => handleEmitEditPost(posts, postId, newContent)"
 				:post="post"
 				/>
 		</section>
