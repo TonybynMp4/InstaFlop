@@ -36,8 +36,14 @@
         <time style="font-size: 2rem; font-weight: bold;">{{ timeLeft }}</time>
 		<p v-if="timedOut">
 			C'est toujours là? Oh la sauce..
+			<br>
+			(je le laisse en vrai c'est drole)
 		</p>
 
+		<div style="display: flex; gap: 1rem; margin-top: 2rem;">
+			<router-link to="/login" class="button">Se connecter</router-link>
+			<router-link to="/register" class="button">S'inscrire</router-link>
+		</div>
     </main>
 </template>
 

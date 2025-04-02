@@ -93,6 +93,21 @@ class User {
         });
     }
 
+	static async getByUsername(username) {
+        if (!username) {
+            throw new Error('Username is required');
+        }
+
+        return new Promise((resolve, reject) => {
+            db.execute('SELECT id, username, displayname, email, password, role, profile_picture FROM users WHERE username = ?', [username], (err, rows) => {
+                if(err)
+                    reject(err);
+                else
+                    resolve(rows[0]);
+            });
+        });
+    }
+
     static async create(username, displayname, email, password) {
         if (!username || !displayname || !email || !password) {
             throw new Error('All fields are required');

@@ -55,8 +55,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/', username, email, password, validationResult, async (req, res) => {
     const { username, displayname, email, password } = req.body;
-
-    if (!username || !displayname || !email || !password) {
+	if (!username || !displayname || !email || !password) {
         res.status(400).json({ errors: {msg: 'All fields are required'} });
         return;
     }
@@ -67,6 +66,12 @@ router.post('/', username, email, password, validationResult, async (req, res) =
             res.status(400).json({ errors: {msg:  'Email already exists'} });
             return;
         }
+
+		const existingUsername = await User.getByUsername(username);
+		if (existingUsername) {
+			res.status(400).json({ errors: {msg:  'Username already exists'} });
+			return;
+		}
 
         const newUser = await User.create(username, displayname, email, password);
         res.status(201).json({ok: true, newUser});

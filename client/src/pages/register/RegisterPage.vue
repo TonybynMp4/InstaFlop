@@ -1,47 +1,54 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import FormComponent from '@/components/FormComponent.vue';
-import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
-import baseURL from '@/baseUrl';
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-const router = useRouter()
-const error = ref<string | {msg:string} |null>(null);
+	import { reactive } from 'vue';
+	import FormComponent from '@/components/FormComponent.vue';
+	import type { ButtonComponentProps, FieldComponentProps } from '@/types/components';
+	import baseURL from '@/baseUrl';
+	import { useRouter } from 'vue-router';
+	import { ref } from 'vue';
+	import { onMounted } from 'vue';
+	const router = useRouter()
+	const error = ref<string | {msg:string} |null>(null);
 
-const formData = reactive<{
-	formLegend: string;
-	fields: FieldComponentProps[];
-	actions: ButtonComponentProps[];
-}>({
-	formLegend: 'Créer un compte',
-	fields: [
-		{ id: 'username', label: 'Handle @', placeholder: 'john_68', type: 'text', required: true },
-		{ id: 'displayname', label: 'Nom d\'utilisateur', placeholder: 'John Doe', type: 'text', required: true },
-		{ id: 'email', label: 'Email', placeholder: 'Email', type: 'email', required: true },
-		{ id: 'password', label: 'Password', placeholder: 'Password', type: 'password', minLength: 8, required: true }
-	],
-	actions: [
-		{ id: 'register', label: 'Créer un compte' },
-		{ id: 'reset', label: 'Reset', type: 'reset' }
-	]
-});
+	onMounted(() => {
+		setTimeout(() => {
+			confirm('PAR PITIEE UTILISEZ PAS DE VRAI DONNEES PERSONNELLES!!!\n(et retenez le MDP pour pouvoir vous connecter derrière..)');
+		}, 100);
+	});
 
-function onsubmit(event: Event) {
-	event.preventDefault();
-	const data = JSON.stringify({
-		email: (event.target as HTMLFormElement).email.value,
-		username: (event.target as HTMLFormElement).username.value.trim().toLowerCase(),
-		displayname: (event.target as HTMLFormElement).displayname.value,
-		password: (event.target as HTMLFormElement).password.value
-	})
+	const formData = reactive<{
+		formLegend: string;
+		fields: FieldComponentProps[];
+		actions: ButtonComponentProps[];
+	}>({
+		formLegend: 'Créer un compte',
+		fields: [
+			{ id: 'username', label: 'Handle @', placeholder: 'john_68', type: 'text', required: true },
+			{ id: 'displayname', label: 'Nom d\'utilisateur', placeholder: 'John Doe', type: 'text', required: true },
+			{ id: 'email', label: 'Email', placeholder: 'Email', type: 'email', required: true },
+			{ id: 'password', label: 'Password', placeholder: 'Password', type: 'password', minLength: 8, required: true }
+		],
+		actions: [
+			{ id: 'register', label: 'Créer un compte' },
+			{ id: 'reset', label: 'Reset', type: 'reset' }
+		]
+	});
 
-	fetch(baseURL + '/api/user', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: data
-	})
+	function onsubmit(event: Event) {
+		event.preventDefault();
+		const data = JSON.stringify({
+			email: (event.target as HTMLFormElement).email.value,
+			username: (event.target as HTMLFormElement).username.value.trim().toLowerCase(),
+			displayname: (event.target as HTMLFormElement).displayname.value,
+			password: (event.target as HTMLFormElement).password.value
+		})
+
+		fetch(baseURL + '/api/user', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: data
+		})
 		.then(response => {
 			return response.json()
 		})
@@ -69,7 +76,7 @@ function onsubmit(event: Event) {
 			<ul v-else-if="Array.isArray(error)">
 				<li v-for="(err, index) in error" :key="index">{{ err.msg }}</li>
 			</ul>
-			<p v-else>{{ error }}</p>
+			<p v-else>{{ error.msg ?? error }}</p>
 		</div>
 		<FormComponent :formLegend="formData.formLegend" :fields="formData.fields" :actions="formData.actions"
 			:onSubmit="onsubmit" />
