@@ -11,6 +11,7 @@
 	import PostComponent from "@/components/post/PostComponent.vue";
 	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
 	import { watch } from "vue";
+import baseURL from "@/baseUrl";
 	const router = useRouter();
 	const Route = useRoute();
 	let profileId = Route.params.id as string | null;
@@ -72,6 +73,36 @@
 			alert('Error editing comment. Please try again later.');
 		}
 	}
+
+	async function followUser() {
+		if (!profileId) return;
+		const result: {
+			followed: boolean;
+			unfollowed: boolean;
+			error?: string;
+		} = await fetch(baseURL+`/api/follower`, {
+			method: userData.value.isFollowing ? "DELETE" : "POST",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				id: userData.value.id,
+			}),
+		}).then((res) => res.json());
+		if (result.error) {
+			alert(result.error);
+			return;
+		}
+
+		if (result.followed) {
+			userData.value.isFollowing = true;
+			userData.value.followers += 1;
+		}
+		if (result.unfollowed) {
+			userData.value.isFollowing = false;
+			userData.value.followers -= 1;
+		}
+
+	}
 </script>
 
 <template>
@@ -82,8 +113,12 @@
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
 					<div class="buttons">
-						<button class="follow-btn"
-							v-if="profileId && authStore.getUser?.username !== profileId">Follow</button>
+						<button class="follow-btn" :class="{ 'followed': userData.isFollowing }"
+							v-if="profileId && authStore.getUser?.username !== profileId"
+							@click="followUser"
+						>
+							{{ userData.isFollowing ? 'Unfollow' : 'Follow' }}
+						</button>
 						<button @click="openDialog" v-else>
 							<Settings />
 						</button>
@@ -233,6 +268,15 @@ main {
 .follow-btn {
 	background-color: #e1306c;
 	color: white;
+}
+
+.followed {
+	background-color: white!important;
+	color: black!important;
+}
+
+.followed:hover {
+	background-color: #e0e0e0!important;
 }
 
 .follow-btn:hover {

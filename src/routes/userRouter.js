@@ -7,23 +7,6 @@ const validationResult = require('../middlewares/validationResult');
 const auth = require('../middlewares/auth');
 
 // public API
-router.get('/getProfile/:username', async (req, res) => {
-	const username = req.params.username;
-	if (!username) {
-		res.status(400).json({ error: 'Username is required' });
-		return;
-	}
-
-	try {
-		const userProfile = await User.getProfileByUsername(username);
-		if (userProfile)
-			res.status(200).json({userProfile});
-		else
-			res.status(404).json({ error: 'User not found' });
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-});
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -81,6 +64,23 @@ router.post('/', username, email, password, validationResult, async (req, res) =
 
 router.use(auth);
 // protected API (only authenticated users can access)
+router.get('/getProfile/:username', async (req, res) => {
+	const username = req.params.username;
+	if (!username) {
+		res.status(400).json({ error: 'Username is required' });
+		return;
+	}
+
+	try {
+		const userProfile = await User.getProfileByUsername(username, req.auth?.id);
+		if (userProfile)
+			res.status(200).json({userProfile});
+		else
+			res.status(404).json({ error: 'User not found' });
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
 
 router.get('/', async (req, res) => {
     const authUserId = req.auth.id;

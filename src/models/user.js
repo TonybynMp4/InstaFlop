@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const Follow = require('./follow');
 
 class User {
-    static async getProfileByUsername(username) {
+    static async getProfileByUsername(username, user_id) {
         if (!username) {
             throw new Error('username is required');
         }
@@ -15,7 +15,6 @@ class User {
 
 				const followerCount = await Follow.getFollowerCount(rows[0].id);
 				const followingCount = await Follow.getFollowingCount(rows[0].id);
-
 				const user = {
 					id: rows[0].id,
 					username: rows[0].username,
@@ -23,7 +22,8 @@ class User {
 					profilePicture: rows[0].profile_picture,
 					bio: rows[0].bio,
 					followers: followerCount,
-					following: followingCount
+					following: followingCount,
+					isFollowing: user_id ? rows[0].id !== user_id && await Follow.isFollowing(user_id, rows[0].id) : false,
 				}
 				resolve(user);
 			});

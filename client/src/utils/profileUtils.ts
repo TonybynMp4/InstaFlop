@@ -8,6 +8,7 @@ async function fetchUserProfile(username: string): Promise<UserProfile> {
 		error?: string;
 	} = await fetch(baseURL+`/api/user/getProfile/${username}`, {
 		method: "GET",
+		credentials: "include",
 		headers: {
 			"Content-Type": "application/json"
 		}

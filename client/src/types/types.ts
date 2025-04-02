@@ -11,6 +11,7 @@ interface UserProfile extends User {
 	bio: string;
 	followers: number;
 	following: number;
+	isFollowing: boolean;
 }
 
 interface Comment {

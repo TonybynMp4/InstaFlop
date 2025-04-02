@@ -36,6 +36,15 @@ class Follow {
 			});
 		});
 	}
+
+	static async isFollowing(followerId, followingId) {
+		return new Promise((resolve, reject) => {
+			db.execute('SELECT * FROM followers WHERE follower_id = ? AND following_id = ?', [followerId, followingId], (err, rows) => {
+				if (err) return reject(err);
+				resolve(rows.length > 0);
+			});
+		});
+	}
 }
 
 module.exports = Follow;
