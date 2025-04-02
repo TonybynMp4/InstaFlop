@@ -12,6 +12,15 @@ class PostMedia {
         });
     }
 
+	static async getByPostId(postId) {
+		return new Promise((resolve, reject) => {
+			db.execute(`SELECT media_url FROM post_medias WHERE post_id = ?`, [postId], (err, data) => {
+				if (err) reject(err);
+				else resolve(data.map(row => row.media_url));
+			});
+		});
+	}
+
     static async getById(id) {
 		const idType = typeof id;
 		if (idType !== 'number' && idType !== 'string' && idType !== 'object') {

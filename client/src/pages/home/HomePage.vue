@@ -1,15 +1,13 @@
 <script setup lang="ts">
 	import PostComponent from '@/components/post/PostComponent.vue';
 	import PostComposer from '@/components/post/PostComposer.vue';
-	import type { serverPost } from '@/types/apiResponses';
 	import type { PostComponentProps } from '@/types/components';
 	import { onMounted, reactive } from 'vue';
-	import sanitizePosts from '@/utils/sanitizePosts';
 	import baseURL from '@/baseUrl';
 	import { createComment, dislikePost, editComment, likePost, deleteComment } from '@/utils/postUtils';
 
 	const posts = reactive<PostComponentProps[]>([]);
-	type getFeedResponse = serverPost[] | { error: string };
+	type getFeedResponse = {error: string} | PostComponentProps[];
 	onMounted(async () => {
 		await fetch(baseURL + '/api/post/getFeed', {
 			method: 'GET',
@@ -22,15 +20,15 @@
 				console.error('Error fetching posts:', data.error);
 				return;
 			}
-			posts.push(...sanitizePosts(data));
+			posts.push(...data);
 		}).catch((error) => {
 			console.error('Error fetching posts:', error);
 		});
 	});
 
-	const addPost = (post: serverPost) => {
+	const addPost = (post: PostComponentProps) => {
 		if (!post) return;
-		posts.unshift(sanitizePosts([post])[0]);
+		posts.unshift(post);
 	};
 
 	async function handleEmitLikePost(postId: number) {

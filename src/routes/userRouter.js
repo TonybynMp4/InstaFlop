@@ -15,11 +15,11 @@ router.get('/getProfile/:id', async (req, res) => {
 	}
 
 	try {
-		const user = await User.getProfileById(userId);
-		if (user)
-			res.status(200).json(user);
+		const userProfile = await User.getProfileById(userId);
+		if (userProfile)
+			res.status(200).json({userProfile});
 		else
-			res.status(404).json({ message: 'User not found' });
+			res.status(404).json({ error: 'User not found' });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}

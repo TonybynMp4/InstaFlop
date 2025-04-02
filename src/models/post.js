@@ -1,10 +1,28 @@
 const db = require('./db');
 const PostMedia = require('./postMedia');
-const { getMedias } = require('./postUtils');
 const Comment = require('./comment');
 const Like = require('./like');
 
 class Post {
+	static async getData(post, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null } = {}) {
+		if (!post) return null;
+
+		return {
+			id: post.id,
+			content: post.description,
+			images: withMedia && await PostMedia.getByPostId(post.id) || [],
+			user: {
+				username: post.username,
+				displayname: post.displayname,
+				profilePicture: post.profile_picture,
+			},
+			liked: (withLiked && authUserId) && await Like.getIsLiked(post.id, authUserId) || false,
+			likes: withLikes && await Like.getByPostId(post.id) || 0,
+			createdAt: post.created_at,
+			comments: withComments && await Comment.getByPostId(post.id) || [],
+		}
+	}
+
     static async getAll({ withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
@@ -18,14 +36,13 @@ class Post {
                 }
 
                 try {
+					const posts = [];
                     for (let row of rows) {
-                        if (withMedia) row.medias = await getMedias(row.id);
-                        if (withLikes) row.likes = await Like.getByPostId(row.id);
-                        if (withComments) row.comments = await Comment.getByPostId(row.id);
-						if (withLiked) row.liked = await Like.getIsLiked(row.id, authUserId);
+						const postData = await this.getData(row, { withMedia, withComments, withLikes, withLiked, authUserId });
+						posts.push(postData);
 					}
 
-                    resolve(rows);
+                    resolve(posts);
                 } catch (error) {
                     reject(error);
                 }
@@ -57,16 +74,13 @@ class Post {
                 }
 
                 try {
+					const posts = [];
                     for (let row of rows) {
-                        if (withMedia) row.medias = await getMedias(row.id);
-                        if (withLikes) row.likes = await Like.getByPostId(row.id);
-                        if (withComments) row.comments = await Comment.getByPostId(row.id);
-						if (withLiked) {
-							row.liked = await Like.getIsLiked(row.id, authUserId);
-						}
+						const postData = await this.getData(row, { withMedia, withComments, withLikes, withLiked, authUserId });
+						posts.push(postData);
                     }
 
-                    resolve(rows);
+                    resolve(posts);
                 } catch (error) {
                     reject(error);
                 }
@@ -88,13 +102,9 @@ class Post {
                 else
                     try {
                         if (rows.length === 0) return resolve(null);
-                        let post = rows[0];
-                        if (withMedia) post.medias = await getMedias(post.id);
-                        if (withComments) post.comments = await Comment.getByPostId(post.id);
-                        if (withLikes) post.likes = await Like.getByPostId(post.id);
-						if (withLiked && authUserId) post.liked = await Like.getIsLiked(post.id, authUserId);
+                        const post = await this.getData(rows[0], { withMedia, withComments, withLikes, withLiked, authUserId });
 
-                        resolve(post);
+						resolve(post);
                     } catch (error) {
                         reject(error);
                     }
@@ -102,28 +112,29 @@ class Post {
         });
     }
 
-	static async getPostsByUserId(user_id, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
+	static async getPostsByUsername(username, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
 				FROM posts AS post
 				LEFT JOIN users AS user
-				ON post.user_id = user.id WHERE post.user_id = ?
+				ON post.user_id = user.id
+				WHERE user.username = ?
 			`;
 
-			db.execute(query, [user_id], async (err, rows) => {
+			db.execute(query, [username], async (err, rows) => {
 				if (err)
 					reject(err);
 				else
 					try {
 						if (rows.length === 0) return resolve(null);
-						let post = rows[0];
+						const posts = [];
 
-						if (withMedia) post.medias = await getMedias(post.id);
-						if (withComments) post.comments = await Comment.getByPostId(post.id);
-						if (withLikes) post.likes = await Like.getByPostId(post.id);
-						if (withLiked && authUserId) post.liked = await Like.getIsLiked(post.id, authUserId);
+						for (let row of rows) {
+							const postData = await this.getData(row, { withMedia, withComments, withLikes, withLiked, authUserId });
+							posts.push(postData);
+						}
 
-						resolve(post);
+						resolve(posts);
 					} catch (error) {
 						reject(error);
 					}
@@ -177,9 +188,9 @@ class Post {
         }
 
         return new Promise((resolve, reject) => {
-            let query = 'UPDATE posts SET ';
-            let fields = [];
-            let values = [];
+            const query = 'UPDATE posts SET ';
+            const fields = [];
+            const values = [];
             if (title) {
                 fields.push('title = ?');
                 values.push(title);
