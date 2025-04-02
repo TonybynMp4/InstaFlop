@@ -1,4 +1,6 @@
 const { createUploadthing } = require("uploadthing/server");
+const crypto = require("crypto");
+globalThis.crypto = crypto;
 
 const f = createUploadthing();
 
