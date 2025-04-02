@@ -69,7 +69,7 @@
 	.gallery {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content:space-between;
+		gap: 1%;
 	}
 
 	.dialog {
@@ -109,5 +109,9 @@
 		gap: 1rem;
 		width: 100%;
 		height: 40%;
+	}
+
+	.gallery_item {
+		margin-bottom: 0.5rem;
 	}
 </style>

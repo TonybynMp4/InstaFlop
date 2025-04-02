@@ -22,7 +22,6 @@
 			mediaUrls: mediaUrls.value,
 		});
 
-
 		fetch(baseURL + '/api/post', {
 			method: 'POST',
 			credentials: 'include',
@@ -61,8 +60,7 @@
 		</div>
 		<div class="post-composer__media-preview">
 			<div v-for="url in mediaUrls" class="relative">
-				<img :src="url" :key="url" alt="Uploaded media"
-					style="max-width: 100px; max-height: 100px;" />
+				<img :src="url" alt="Uploaded media" style="max-width: 100px; max-height: 100px;" />
 				<XIcon @click="mediaUrls = mediaUrls.filter(mediaUrl => mediaUrl !== url)"
 					style="cursor: pointer; color: red; height: 100%; width: 100%;" class="absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2" />
 			</div>
@@ -71,7 +69,7 @@
 			headers: {
 				credentials: 'include',
 			},
-			endpoint: 'videoAndImage',
+			endpoint: 'Images',
 			onClientUploadComplete: (files) => {
 				files.forEach(file => mediaUrls.push(file.ufsUrl));
 				isUploading = false;

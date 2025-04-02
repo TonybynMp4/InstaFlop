@@ -44,6 +44,7 @@ fieldset {
 
 .actions button {
     flex: 1 1 auto;
+	padding: 0.5rem;
 }
 
 #reset {

@@ -8,7 +8,7 @@ import {
 import BACKEND_URL from "./baseUrl";
 
 const initOpts = {
-	url: BACKEND_URL,
+	url: BACKEND_URL ?? '/',
 } satisfies GenerateTypedHelpersOptions;
 
 export const UploadButton = generateUploadButton(initOpts);

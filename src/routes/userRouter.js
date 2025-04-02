@@ -7,6 +7,19 @@ const validationResult = require('../middlewares/validationResult');
 const auth = require('../middlewares/auth');
 
 // public API
+router.get('/searchUsers/:searchInput', async (req, res) => {
+	const { searchInput } = req.params;
+	if (!searchInput) {
+		return res.status(400).json({ error: 'Username is required' });
+	}
+
+	try {
+		const users = await User.searchUsers(searchInput) || [];
+		res.status(200).json({users});
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

@@ -3,6 +3,31 @@ const bcrypt = require('bcrypt');
 const Follow = require('./follow');
 
 class User {
+	static async searchUsers(searchInput) {
+		if (!searchInput) {
+			throw new Error('searchInput is required');
+		}
+
+		return new Promise((resolve, reject) => {
+			const query = `
+				SELECT id, username, displayname, profile_picture FROM users
+				WHERE username LIKE ? OR displayname LIKE ?
+			`;
+			db.execute(query, [`%${searchInput}%`, `%${searchInput}%`], async (err, rows) => {
+				if(err) return reject(err);
+				if (rows.length === 0) return resolve([]);
+
+				const users = rows.map(row => ({
+					id: row.id,
+					username: row.username,
+					displayname: row.displayname,
+					profile_picture: row.profile_picture,
+				}));
+				resolve(users);
+			});
+		});
+	}
+
     static async getProfileByUsername(username, user_id) {
         if (!username) {
             throw new Error('username is required');
