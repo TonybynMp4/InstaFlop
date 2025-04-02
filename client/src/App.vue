@@ -14,9 +14,6 @@
 			<router-link to="/" class="header__title">InstaFlop</router-link>
         </h1>
         <ul>
-            <li>
-                <router-link class="button" to="/">Landing</router-link>
-            </li>
             <li v-if="!isLoggedIn">
                 <router-link class="action-btn" to="/register"><UserPlus2 /></router-link>
             </li>

@@ -30,7 +30,6 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 
 	async function editPost(postId: number, newContent: string) {
 		const result = await handleEmitEditPost(posts.value, postId, newContent);
-		console.log('result', result);
 		if (result) {
 			const postIndex = posts.value.findIndex((post) => post.id === postId);
 			if (postIndex !== -1) {

@@ -8,8 +8,8 @@ const app = express();
 dotenv.config();
 app
 .use(cors({
-	origin: "http://localhost:5173",
-	credentials: true
+	origin: process.env.NODE_ENV === 'dev' ? 'http://localhost:5173' : 'https://instaflop.fr',
+  	credentials: true,
 }))
 .use(express.json({limit: '50mb'}))
 .use(express.urlencoded({ extended: true }))

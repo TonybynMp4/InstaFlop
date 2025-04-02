@@ -6,7 +6,7 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: () => import('@/pages/LandingPage.vue')
+            component: () => import('@/pages/login/LoginPage.vue')
         },
         {
 
@@ -57,8 +57,8 @@ router.beforeEach((to, _, next) => {
 
     if (to.meta.requiresAuth && !isLoggedIn) {
         return next('/login');
-    } else if (isLoggedIn && (to.path === '/login' || to.path === '/register')) {
-        return next('/profile');
+    } else if (isLoggedIn && (to.path === '/login' || to.path === '/register' || to.path === '/')) {
+        return next('/home');
     }
 
     return next();

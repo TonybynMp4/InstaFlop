@@ -51,7 +51,6 @@ function onsubmit(event: Event) {
 				error.value = response.errors ? response.errors : response.error;
 				return;
 			}
-			console.log('Success:', response);
 
 			router.push('/login');
 			alert('Registration successful! You can now log in.');

@@ -35,7 +35,6 @@
 
 	async function editPost(postId: number, newContent: string) {
 		const result = await handleEmitEditPost([post.value], postId, newContent);
-		console.log('result', result);
 		if (result) {
 			post.value.content = newContent;
 		} else {

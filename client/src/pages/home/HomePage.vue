@@ -28,7 +28,6 @@
 
 	async function editPost(postId: number, newContent: string) {
 		const result = await handleEmitEditPost(posts, postId, newContent);
-		console.log('result', result);
 		if (result) {
 			const postIndex = posts.findIndex((post) => post.id === postId);
 			if (postIndex !== -1) {
