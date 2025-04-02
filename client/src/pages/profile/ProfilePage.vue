@@ -64,7 +64,6 @@
 				const commentIndex = posts.value[postIndex].comments.findIndex((comment) => comment.comment.id === data.commentId);
 				if (commentIndex !== -1) {
 					posts.value[postIndex].comments[commentIndex] = result;
-					// marche pas alors que ça devrais, flemme de chercher + il est 6h
 				} else {
 					alert('Comment not found.');
 				}
@@ -78,7 +77,7 @@
 <template>
 	<main>
 		<section class="profile-header">
-			<ProfilePicture class="profile-picture" :src="userData.profilePicture" :fallback="userData.username" />
+			<ProfilePicture class="profile-picture" :src="userData.profilePicture" :fallback="userData.username" :key="userData.username"/>
 			<div class="profile-info">
 				<div class="profile-info-top">
 					<h2 style="font-size: larger; font-weight: bold;">{{ userData.username }}</h2>
