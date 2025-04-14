@@ -10,7 +10,7 @@ class User {
 
 		return new Promise((resolve, reject) => {
 			const query = `
-				SELECT id, username, displayname, profile_picture FROM users
+				SELECT id, username, displayname, profile_picture FROM instaflop_users
 				WHERE username LIKE ? OR displayname LIKE ?
 			`;
 			db.execute(query, [`%${searchInput}%`, `%${searchInput}%`], async (err, rows) => {
@@ -34,7 +34,7 @@ class User {
         }
 
 		return new Promise((resolve, reject) => {
-			db.execute('SELECT id, username, displayname, profile_picture, bio FROM users WHERE username = ?', [username], async (err, rows) => {
+			db.execute('SELECT id, username, displayname, profile_picture, bio FROM instaflop_users WHERE username = ?', [username], async (err, rows) => {
 				if(err) return reject(err);
 				if (rows.length === 0) return resolve(null);
 
@@ -61,7 +61,7 @@ class User {
         }
 
 		return new Promise((resolve, reject) => {
-			db.execute('SELECT id, username, displayname, profile_picture, role FROM users WHERE id = ?', [id], async (err, rows) => {
+			db.execute('SELECT id, username, displayname, profile_picture, role FROM instaflop_users WHERE id = ?', [id], async (err, rows) => {
 				if(err) return reject(err);
 				if (rows.length === 0) return resolve(null);
 
@@ -84,7 +84,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('SELECT id, username, displayname, email, password, role, profile_picture FROM users WHERE email = ?', [email], (err, rows) => {
+            db.execute('SELECT id, username, displayname, email, password, role, profile_picture FROM instaflop_users WHERE email = ?', [email], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -99,7 +99,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('SELECT id, username, displayname, email, password, role, profile_picture FROM users WHERE username = ?', [username], (err, rows) => {
+            db.execute('SELECT id, username, displayname, email, password, role, profile_picture FROM instaflop_users WHERE username = ?', [username], (err, rows) => {
                 if(err)
                     reject(err);
                 else
@@ -116,11 +116,11 @@ class User {
         password = bcrypt.hashSync(password, 10);
 
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO users (username, displayname, email, password) VALUES (?, ?, ?, ?)', [username, displayname, email, password], (err, rows) => {
+            db.execute('INSERT INTO instaflop_users (username, displayname, email, password) VALUES (?, ?, ?, ?)', [username, displayname, email, password], (err, rows) => {
                 if(err) return reject(err);
 
                 if (rows.affectedRows === 0) return reject(new Error('user not created'));
-                db.execute('SELECT id, username, displayname FROM users WHERE id = ?', [rows.insertId], (err, rows) => {
+                db.execute('SELECT id, username, displayname FROM instaflop_users WHERE id = ?', [rows.insertId], (err, rows) => {
                     if(err) return reject(err);
                     resolve(rows[0]);
                 });
@@ -138,7 +138,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            let query = 'UPDATE users SET ';
+            let query = 'UPDATE instaflop_users SET ';
             let fields = [];
             let values = [];
 
@@ -190,7 +190,7 @@ class User {
         }
 
         return new Promise((resolve, reject) => {
-            db.execute('DELETE FROM users WHERE id = ?', [id], (err, rows) => {
+            db.execute('DELETE FROM instaflop_users WHERE id = ?', [id], (err, rows) => {
                 if(err)
                     reject(err);
                 else {

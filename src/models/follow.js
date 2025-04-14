@@ -3,7 +3,7 @@ const db = require('./db');
 class Follow {
 	static async getFollowerCount(userId) {
 		return new Promise((resolve, reject) => {
-			db.execute('SELECT COUNT(*) AS count FROM followers WHERE following_id = ?', [userId], (err, rows) => {
+			db.execute('SELECT COUNT(*) AS count FROM instaflop_followers WHERE following_id = ?', [userId], (err, rows) => {
 				if (err) return reject(err);
 				resolve(rows[0].count);
 			});
@@ -12,7 +12,7 @@ class Follow {
 
 	static async getFollowingCount(userId) {
 		return new Promise((resolve, reject) => {
-			db.execute('SELECT COUNT(*) AS count FROM followers WHERE follower_id = ?', [userId], (err, rows) => {
+			db.execute('SELECT COUNT(*) AS count FROM instaflop_followers WHERE follower_id = ?', [userId], (err, rows) => {
 				if (err) return reject(err);
 				resolve(rows[0].count);
 			});
@@ -21,7 +21,7 @@ class Follow {
 
 	static async follow(followerId, followingId) {
 		return new Promise((resolve, reject) => {
-			db.execute('INSERT INTO followers (follower_id, following_id) VALUES (?, ?)', [followerId, followingId], (err, result) => {
+			db.execute('INSERT INTO instaflop_followers (follower_id, following_id) VALUES (?, ?)', [followerId, followingId], (err, result) => {
 				if (err) return reject(err);
 				resolve(result.affectedRows > 0);
 			});
@@ -30,7 +30,7 @@ class Follow {
 
 	static async unfollow(followerId, followingId) {
 		return new Promise((resolve, reject) => {
-			db.execute('DELETE FROM followers WHERE follower_id = ? AND following_id = ?', [followerId, followingId], (err, result) => {
+			db.execute('DELETE FROM instaflop_followers WHERE follower_id = ? AND following_id = ?', [followerId, followingId], (err, result) => {
 				if (err) return reject(err);
 				resolve(result.affectedRows > 0);
 			});
@@ -39,7 +39,7 @@ class Follow {
 
 	static async isFollowing(followerId, followingId) {
 		return new Promise((resolve, reject) => {
-			db.execute('SELECT * FROM followers WHERE follower_id = ? AND following_id = ?', [followerId, followingId], (err, rows) => {
+			db.execute('SELECT * FROM instaflop_followers WHERE follower_id = ? AND following_id = ?', [followerId, followingId], (err, rows) => {
 				if (err) return reject(err);
 				resolve(rows.length > 0);
 			});

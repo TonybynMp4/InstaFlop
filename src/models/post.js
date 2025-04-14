@@ -26,8 +26,8 @@ class Post {
     static async getAll({ withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
-				FROM posts AS post
-				LEFT JOIN users AS user
+				FROM instaflop_posts AS post
+				LEFT JOIN instaflop_users AS user
 				ON post.user_id = user.id
 				ORDER BY post.created_at DESC
 			`;
@@ -58,11 +58,11 @@ class Post {
 
 		const query = `
 			SELECT post.*, user.username, user.displayname, user.profile_picture
-			FROM posts AS post
-			LEFT JOIN users AS user
+			FROM instaflop_posts AS post
+			LEFT JOIN instaflop_users AS user
 			ON post.user_id = user.id
 			WHERE post.user_id IN (
-				SELECT following_id FROM followers WHERE follower_id = ?
+				SELECT following_id FROM instaflop_followers WHERE follower_id = ?
 			)
 			OR post.user_id = ?
 			ORDER BY post.created_at DESC
@@ -92,8 +92,8 @@ class Post {
     static async getById(id, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
         return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
-				FROM posts AS post
-				LEFT JOIN users AS user
+				FROM instaflop_posts AS post
+				LEFT JOIN instaflop_users AS user
 				ON post.user_id = user.id WHERE post.id = ?
 			`;
 
@@ -116,8 +116,8 @@ class Post {
 	static async getPostsByUsername(username, { withMedia = true, withComments = true, withLikes = true, withLiked = false, authUserId = null }) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT post.*, user.username, user.displayname, user.profile_picture
-				FROM posts AS post
-				LEFT JOIN users AS user
+				FROM instaflop_posts AS post
+				LEFT JOIN instaflop_users AS user
 				ON post.user_id = user.id
 				WHERE user.username = ?
 			`;
@@ -145,7 +145,7 @@ class Post {
 
     static async create({ content, mediaUrls, user_id }) {
         return new Promise((resolve, reject) => {
-            db.execute('INSERT INTO posts (user_id, description) VALUES (?, ?)', [user_id, content], async (err, rows) => {
+            db.execute('INSERT INTO instaflop_posts (user_id, description) VALUES (?, ?)', [user_id, content], async (err, rows) => {
                 if (err)
                     reject(err);
                 else {
@@ -170,7 +170,7 @@ class Post {
 
     static async delete(id) {
         return new Promise((resolve, reject) => {
-            db.execute('DELETE FROM posts WHERE id = ?', [id], (err, rows) => {
+            db.execute('DELETE FROM instaflop_posts WHERE id = ?', [id], (err, rows) => {
                 if (err)
                     reject(err);
                 else {
@@ -189,7 +189,7 @@ class Post {
         }
 
         return new Promise((resolve, reject) => {
-            let query = 'UPDATE posts SET ';
+            let query = 'UPDATE instaflop_posts SET ';
             let fields = [];
             let values = [];
             if (description) {
