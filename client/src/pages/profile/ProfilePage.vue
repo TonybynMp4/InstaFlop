@@ -11,7 +11,8 @@
 	import PostComponent from "@/components/post/PostComponent.vue";
 	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
 	import { watch } from "vue";
-import baseURL from "@/baseUrl";
+	import baseURL from "@/baseUrl";
+	import LoadingComponent from "@/components/LoadingComponent.vue";
 	const router = useRouter();
 	const Route = useRoute();
 	let profileId = Route.params.id as string | null;
@@ -24,14 +25,19 @@ import baseURL from "@/baseUrl";
 	const authStore = useAuthStore();
 	const userData = ref<UserProfile>({} as UserProfile);
 	const posts = ref<PostComponentProps[]>([]);
+	const isFetching = ref(false);
 
 	async function fetchData() {
 		const username = profileId ?? authStore.getUser?.username ?? null;
+		isFetching.value = true;
 		if (!username) {
+			isFetching.value = false;
 			return router.push("/notfound");
 		}
+
 		userData.value = await fetchUserProfile(username);
 		posts.value = await fetchUserPosts(username);
+		isFetching.value = false;
 	}
 
 	onBeforeMount(fetchData);
@@ -178,6 +184,11 @@ import baseURL from "@/baseUrl";
 				@editPost="(postId, newContent) => handleEmitEditPost(posts, postId, newContent)"
 				:post="post"
 			/>
+		</section>
+		<section v-if="isFetching">
+			<LoadingComponent>
+				Chargement du feed...
+			</LoadingComponent>
 		</section>
 		<section v-else>
 			<p>No posts available.</p>

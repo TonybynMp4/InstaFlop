@@ -32,9 +32,7 @@
         });
 
         if (!success) {
-			if (loginError) {
-					error.value = loginError.error ?? loginError;
-			}
+			if (loginError) error.value = loginError.error ?? loginError;
         }
     }
 </script>

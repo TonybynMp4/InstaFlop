@@ -8,9 +8,11 @@
 
 	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from '@/utils/postUtils';
 	import router from '@/router';
+	import LoadingComponent from '@/components/LoadingComponent.vue';
 	const post = ref<PostComponentProps>({} as PostComponentProps);
 	type getFeedResponse = {error: string} | PostComponentProps;
 	const postId = useRoute().params.id as string;
+	const isFetching = ref(true);
 
 	onBeforeMount(async () => {
 		if (!postId) {
@@ -25,8 +27,10 @@
 		}).then((data: getFeedResponse) => {
 			if ('error' in data) {
 				console.error('Error fetching posts:', data.error);
+				isFetching.value = false;
 				return;
 			}
+			isFetching.value = false;
 			post.value = data;
 		}).catch((error) => {
 			console.error('Error fetching posts:', error);
@@ -60,7 +64,10 @@
 
 <template>
 	<main class="flex flex-col gap-4 items-center">
-		<PostComponent
+		<LoadingComponent v-if="isFetching">
+			Chargement du post...
+		</LoadingComponent>
+		<PostComponent v-else
 			:post="post"
 			@likePost="( postId ) => handleEmitLikePost([post], postId)"
 			@dislikePost="( postId ) => handleEmitDislikePost([post], postId)"
