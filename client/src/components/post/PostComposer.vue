@@ -36,7 +36,7 @@
 		})
 		.then(post => {
 			alert('Post publié avec succès !');
-			emit('postPublished', post);
+			emit('postPublished', {...post, liked: false});
 		})
 		.catch(error => {
 			console.error('Error publishing post:', error);
