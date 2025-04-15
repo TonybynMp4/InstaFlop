@@ -5,10 +5,14 @@
 	import { onMounted, reactive } from 'vue';
 	import baseURL from '@/baseUrl';
 	import { handleEmitLikePost, handleEmitDislikePost, handleEmitEditComment, handleAddPost, handleAddComment, handleEmitEditPost } from '@/utils/postUtils';
+	import { ref } from 'vue';
+	import LoadingComponent from '@/components/LoadingComponent.vue';
 
 	const posts = reactive<PostComponentProps[]>([]);
+	const isFetching = ref(false);
 	type getFeedResponse = {error: string} | PostComponentProps[];
 	onMounted(async () => {
+		isFetching.value = true;
 		await fetch(baseURL + '/api/post/getFeed', {
 			method: 'GET',
 			credentials: 'include',
@@ -18,12 +22,14 @@
 		}).then((data: getFeedResponse) => {
 			if ('error' in data) {
 				console.error('Error fetching posts:', data.error);
+				isFetching.value = false;
 				return;
 			}
 			posts.push(...data);
 		}).catch((error) => {
 			console.error('Error fetching posts:', error);
 		});
+		isFetching.value = false;
 	});
 
 	async function editPost(postId: number, newContent: string) {
@@ -61,6 +67,7 @@
 	<main class="flex flex-col gap-4 items-center">
 		<section id="feed">
 			<PostComposer @postPublished="(post) => handleAddPost(posts, post)" />
+			<LoadingComponent v-if="isFetching" />
 			<PostComponent
 				v-for="post in posts"
 				:key="post.id"

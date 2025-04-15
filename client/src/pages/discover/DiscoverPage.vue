@@ -4,11 +4,14 @@
 	import PostGalleryComponent from "@/components/post/PostGalleryComponent.vue";
 	import baseURL from "@/baseUrl";
 	import { handleAddComment, handleEmitDislikePost, handleEmitEditComment, handleEmitEditPost, handleEmitLikePost } from "@/utils/postUtils";
-import ProfilePictureComponent from "@/components/profile/ProfilePictureComponent.vue";
+	import ProfilePictureComponent from "@/components/profile/ProfilePictureComponent.vue";
+	import LoadingComponent from "@/components/LoadingComponent.vue";
 
 	const posts = ref<PostComponentProps[]>([]);
+	const isFetching = ref(false);
 
 	async function fetchData() {
+		isFetching.value = true;
 		const fetchedPosts: {
 			error: string;
 			posts: PostComponentProps[];
@@ -20,9 +23,11 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 
 		if (fetchedPosts.error) {
 			console.error('Error fetching posts:', fetchedPosts.error);
+			isFetching.value = false;
 			return;
 		}
 
+		isFetching.value = false;
 		posts.value = fetchedPosts.posts;
 	}
 
@@ -65,10 +70,13 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 		profile_picture: string;
 	}
 	const fetchedUsers = ref<fetchedUser[]>([]);
+	const isSearching = ref(false);
 	async function fetchUsers(event: Event) {
 		const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+		isSearching.value = true;
 		if (!searchTerm || searchTerm.length < 3) {
 			fetchedUsers.value = [];
+			isSearching.value = false;
 			return;
 		}
 
@@ -92,9 +100,12 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 		if (error) {
 			alert('Error fetching users: ' + error);
 			console.error('Error fetching users:', error);
+			isSearching.value = false;
 			return;
 		}
 
+		fetchedUsers.value = [{} as fetchedUser];
+		isSearching.value = false;
 		fetchedUsers.value = users;
 	}
 
@@ -105,8 +116,11 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 		<h2>Posts récents:</h2>
 		<div class="search-bar">
 			<input type="text" placeholder="Search profiles..." @input="fetchUsers" />
-			<div v-if="fetchedUsers.length > 0" class="search-results">
+			<div v-if="fetchedUsers.length > 0 || isSearching" class="search-results">
 				<ul>
+					<li v-if="isSearching" class="search-result">
+						<LoadingComponent />
+					</li>
 					<li v-for="user in fetchedUsers"
 						:key="user.id">
 						<router-link class="search-result" :to="`/profile/${user.username}`">
@@ -125,6 +139,9 @@ import ProfilePictureComponent from "@/components/profile/ProfilePictureComponen
 			@editComment="editComment"
 			@editPost="editPost"
 		/>
+		<p v-else-if="isFetching">
+			<LoadingComponent>Chargement des posts...</LoadingComponent>
+		</p>
 		<p v-else>No posts available.</p>
 	</main>
 </template>
