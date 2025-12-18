@@ -1,4 +1,5 @@
 [functions]
+    external_node_modules = ["bcrypt", "mysql2"]
     node_bundler = "esbuild"
 	included_files = ["isrgrootx1.pem"]
 [[redirects]]
