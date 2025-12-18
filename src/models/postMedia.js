@@ -3,7 +3,7 @@ const db = require('./db');
 class PostMedia {
     static async getAll() {
         return new Promise((resolve, reject) => {
-            db.query('SELECT * from instaflop_post_medias ORDER BY created_at DESC', async (err, rows) => {
+            db.query('SELECT * from post_medias ORDER BY created_at DESC', async (err, rows) => {
                 if (err) {
                     return reject(err);
                 }
@@ -14,7 +14,7 @@ class PostMedia {
 
 	static async getByPostId(postId) {
 		return new Promise((resolve, reject) => {
-			db.execute(`SELECT media_url FROM instaflop_post_medias WHERE post_id = ?`, [postId], (err, data) => {
+			db.execute(`SELECT media_url FROM post_medias WHERE post_id = ?`, [postId], (err, data) => {
 				if (err) reject(err);
 				else resolve(data.map(row => row.media_url));
 			});
@@ -32,7 +32,7 @@ class PostMedia {
 		}
 
 		const query = `
-			SELECT * from instaflop_post_medias WHERE
+			SELECT * from post_medias WHERE
 			${idType === 'object' ? 'id IN (?)' : 'id = ?'}
 		`
 
@@ -61,7 +61,7 @@ class PostMedia {
 			throw new Error('mediaUrls cannot be empty');
 		}
 
-		const query = 'INSERT INTO instaflop_post_medias (media_url, user_id, post_id) VALUES ?';
+		const query = 'INSERT INTO post_medias (media_url, user_id, post_id) VALUES ?';
 		const values = mediaUrls.map(url => [url, user_id, postId]);
 
 		return new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ class PostMedia {
 
     static async delete(id) {
         return new Promise((resolve, reject) => {
-            db.execute('DELETE FROM instaflop_post_medias WHERE id = ?', [id], (err, rows) => {
+            db.execute('DELETE FROM post_medias WHERE id = ?', [id], (err, rows) => {
                 if (err)
                     reject(err);
                 else {
@@ -113,7 +113,7 @@ class PostMedia {
                     if (rows.affectedRows === 0)
                         reject(new Error('post not found'));
                     else
-                        db.execute('SELECT * FROM instaflop_post_medias WHERE id = ?', [id], (err, rows) => {
+                        db.execute('SELECT * FROM post_medias WHERE id = ?', [id], (err, rows) => {
                             if (err)
                                 reject(err);
                             else

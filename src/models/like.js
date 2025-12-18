@@ -3,7 +3,7 @@ const db = require('./db');
 class Like {
 	static async create(userId, postId) {
 		return new Promise((resolve, reject) => {
-			const query = `INSERT INTO instaflop_likes (user_id, post_id) VALUES (?, ?)`;
+			const query = `INSERT INTO likes (user_id, post_id) VALUES (?, ?)`;
 			db.execute(query, [userId, postId], (err, rows) => {
 				if (err) return reject(err);
 				else {
@@ -15,7 +15,7 @@ class Like {
 
 	static async delete(userId, postId) {
 		return new Promise((resolve, reject) => {
-			const query = `DELETE FROM instaflop_likes WHERE user_id = ? AND post_id = ?`;
+			const query = `DELETE FROM likes WHERE user_id = ? AND post_id = ?`;
 			db.execute(query, [userId, postId], (err, rows) => {
 				if (err) return reject(err);
 				else {
@@ -27,7 +27,7 @@ class Like {
 
 	static async getByPostId(postId) {
 		return new Promise((resolve, reject) => {
-			const query = `SELECT COUNT(*) AS count FROM instaflop_likes WHERE post_id = ?`;
+			const query = `SELECT COUNT(*) AS count FROM likes WHERE post_id = ?`;
 			db.execute(query, [postId], (err, rows) => {
 				if (err) return reject(err);
 				else {
@@ -40,7 +40,7 @@ class Like {
 
 	static async getIsLiked(postId, userId) {
 		return new Promise((resolve, reject) => {
-			const query = `SELECT post_id FROM instaflop_likes WHERE user_id = ? AND post_id = ?`;
+			const query = `SELECT post_id FROM likes WHERE user_id = ? AND post_id = ?`;
 			db.execute(query, [userId, postId], (err, rows) => {
 				if (err) return reject(err);
 				else {

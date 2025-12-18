@@ -3,17 +3,17 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "build:client": "npm run build --prefix ./client",
+    "build:client": "pnpm build --prefix ./client",
     "start": "node server.js",
     "dev:server": "nodemon server.js",
-    "dev:client": "npm run dev --prefix ./client",
-    "prestart": "npm run build:client",
-    "predev": "npm run i",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "bypass:dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "pnpm dev --prefix ./client",
+    "prestart": "pnpm build:client",
+    "predev": "pnpm i",
+    "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:client\"",
+    "bypass:dev": "concurrently \"pnpm dev:server\" \"pnpm dev:client\"",
     "i:server": "rm -rf node_modules package-lock.json && npm install",
     "i:client": "rm -rf ./client/node_modules ./client/package-lock.json && npm install --prefix ./client",
-    "i": "npm run i:server && npm run i:client"
+    "i": "pnpm i:server && pnpm i:client"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +21,7 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "concurrently": "^9.1.2",
     "connect-history-api-fallback": "^2.0.0",
     "cookie-parser": "^1.4.7",

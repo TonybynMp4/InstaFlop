@@ -4,8 +4,8 @@ class Comment {
 	static async getAll() {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT comment.*, user.username, user.displayname, user.profile_picture
-				FROM instaflop_comments AS comment
-				LEFT JOIN instaflop_users AS user ON comment.user_id = user.id
+				FROM comments AS comment
+				LEFT JOIN users AS user ON comment.user_id = user.id
 			`;
 			db.query(query, async (err, rows) => {
 				if (err) return reject(err);
@@ -17,8 +17,8 @@ class Comment {
 	static async getById(id) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT comment.*, user.username, user.displayname, user.profile_picture
-				FROM instaflop_comments AS comment
-				LEFT JOIN instaflop_users AS user ON comment.user_id = user.id
+				FROM comments AS comment
+				LEFT JOIN users AS user ON comment.user_id = user.id
 				WHERE comment.id = ?
 			`;
 			db.execute(query, [id], async (err, rows) => {
@@ -52,8 +52,8 @@ class Comment {
 	static async getByPostId(postId) {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT comment.*, user.username, user.displayname, user.profile_picture
-				FROM instaflop_comments AS comment
-				LEFT JOIN instaflop_users AS user ON comment.user_id = user.id
+				FROM comments AS comment
+				LEFT JOIN users AS user ON comment.user_id = user.id
 				WHERE comment.post_id = ?
 			`;
 			db.execute(query, [postId], async (err, rows) => {
@@ -88,7 +88,7 @@ class Comment {
 
 	static async create({ content, postId, user_id }) {
 		return new Promise((resolve, reject) => {
-			db.execute('INSERT INTO instaflop_comments (comment, post_id, user_id) VALUES (?, ?, ?)', [content, postId, user_id], async (err, rows) => {
+			db.execute('INSERT INTO comments (comment, post_id, user_id) VALUES (?, ?, ?)', [content, postId, user_id], async (err, rows) => {
 				if (err)
 					reject(err);
 				else
@@ -99,7 +99,7 @@ class Comment {
 
 	static async delete(id) {
 		return new Promise((resolve, reject) => {
-			db.execute('DELETE FROM instaflop_comments WHERE id = ?', [id], (err, rows) => {
+			db.execute('DELETE FROM comments WHERE id = ?', [id], (err, rows) => {
 				if (err)
 					reject(err);
 				else {
@@ -115,7 +115,7 @@ class Comment {
 		}
 
 		return new Promise((resolve, reject) => {
-			let query = 'UPDATE instaflop_comments SET ';
+			let query = 'UPDATE comments SET ';
 			let fields = [];
 			let values = [];
 
