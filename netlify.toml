@@ -1,15 +1,4 @@
 [functions]
-    external_node_modules = [
-        "express",
-        "bcrypt",
-        "mysql2",
-        "jsonwebtoken",
-        "express-validator",
-        "cookie-parser",
-        "cors",
-        "serverless-http",
-        "uploadthing"
-    ]
     node_bundler = "esbuild"
 	included_files = ["isrgrootx1.pem"]
 [[redirects]]
