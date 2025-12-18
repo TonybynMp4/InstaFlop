@@ -12,7 +12,7 @@ function createDatabasePool() {
             database: process.env.DB_NAME,
             port: process.env.DB_PORT,
 			ssl: {
-				ca: fs.readFileSync('singlestore_certificate.pem')
+				ca: fs.readFileSync('isrgrootx1.pem')
 			},
             waitForConnections: true,
             connectionLimit: 50,
