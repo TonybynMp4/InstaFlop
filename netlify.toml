@@ -1,9 +1,13 @@
 [functions]
-    external_node_modules = ["bcrypt", "mysql2"]
-    node_bundler = "esbuild"
+	external_node_modules = ["express", "bcrypt"]
+	node_bundler = "esbuild"
 	included_files = ["isrgrootx1.pem"]
 [[redirects]]
-    force = true
-    from = "/api/*"
-    status = 200
-    to = "/.netlify/functions/api/:splat"
+	force = true
+	from = "/api/*"
+	status = 200
+	to = "/.netlify/functions/api/:splat"
+[[redirects]]
+	from = "/*"
+	to = "/index.html"
+	status = 200
